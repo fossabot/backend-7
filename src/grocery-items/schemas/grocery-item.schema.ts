@@ -1,7 +1,11 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import {
+  Prop,
+  Schema as SchemaDefinition,
+  SchemaFactory,
+} from '@nestjs/mongoose';
+import { Document, Schema } from 'mongoose';
 
-@Schema()
+@SchemaDefinition()
 export class GroceryItem extends Document {
   @Prop({ required: true })
   name: string;
@@ -11,6 +15,9 @@ export class GroceryItem extends Document {
 
   @Prop({ required: false })
   description: string;
+
+  @Prop({ required: true, type: Schema.Types.ObjectId, ref: 'User' })
+  userId: string;
 }
 
 export const GroceryItemSchema = SchemaFactory.createForClass(GroceryItem);

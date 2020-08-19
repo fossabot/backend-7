@@ -12,12 +12,14 @@ export class GroceryItemsService {
 
   async create(
     createGroceryItemDto: CreateGroceryItemDto,
+    ownerId: string,
   ): Promise<GroceryItem> {
     const createdGroceryItem = new this.groceryItemModel(createGroceryItemDto);
+    createdGroceryItem.userId = ownerId;
     return createdGroceryItem.save();
   }
 
-  async findAll(): Promise<GroceryItem[]> {
-    return this.groceryItemModel.find({}, {__v: 0}).exec();
+  async findAllByUserId(userId: string): Promise<GroceryItem[]> {
+    return this.groceryItemModel.find({ userId }, { __v: 0, userId: 0 }).exec();
   }
 }

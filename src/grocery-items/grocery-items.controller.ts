@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { GroceryItemsService } from './grocery-items.service';
 import { CreateGroceryItemDto } from './dto/create-grocery-item.dto';
 import { GroceryItem } from './schemas/grocery-item.schema';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { User } from 'src/users/schemas/user.schema';
 
 @Controller('grocery-items')
 export class GroceryItemsController {
@@ -10,13 +12,21 @@ export class GroceryItemsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() createGroceryItemDto: CreateGroceryItemDto): Promise<void> {
-    await this.groceryItemsService.create(createGroceryItemDto);
+  async create(
+    @Body() createGroceryItemDto: CreateGroceryItemDto,
+    @Req() req: Request,
+  ): Promise<void> {
+    const currentUser = req.user as User;
+    await this.groceryItemsService.create(
+      createGroceryItemDto,
+      currentUser._id,
+    );
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getAll(): Promise<GroceryItem[]> {
-    return this.groceryItemsService.findAll();
+  async getAll(@Req() req: Request): Promise<GroceryItem[]> {
+    const currentUser = req.user as User;
+    return this.groceryItemsService.findAllByUserId(currentUser._id);
   }
 }
