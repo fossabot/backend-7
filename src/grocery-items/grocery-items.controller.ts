@@ -2,9 +2,9 @@ import { Body, Controller, Get, Post, UseGuards, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { GroceryItemsService } from './grocery-items.service';
 import { CreateGroceryItemDto } from './dto/create-grocery-item.dto';
-import { GroceryItem } from './schemas/grocery-item.schema';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { User } from 'src/users/schemas/user.schema';
+import { User } from '../users/schemas/user.schema';
+import { GroceryItem } from './interfaces/grocery-item.interface';
 
 @Controller('grocery-items')
 export class GroceryItemsController {
