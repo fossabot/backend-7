@@ -18,6 +18,6 @@ export class GroceryItemsService {
   }
 
   async findAll(): Promise<GroceryItem[]> {
-    return this.groceryItemModel.find().exec();
+    return this.groceryItemModel.find({}, {__v: 0}).exec();
   }
 }

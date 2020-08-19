@@ -17,9 +17,6 @@ export class GroceryItemsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async getAll(): Promise<GroceryItem[]> {
-    //TODO https://docs.nestjs.com/techniques/serialization
-    //Don't return not wanted fields
-
     return this.groceryItemsService.findAll();
   }
 }
