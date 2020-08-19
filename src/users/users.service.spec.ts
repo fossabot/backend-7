@@ -34,10 +34,4 @@ describe('UsersService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-  it('should return array of users', async () => {
-    const result = [user];
-
-    expect(await service.findAll()).toBe(result);
-  });
 });

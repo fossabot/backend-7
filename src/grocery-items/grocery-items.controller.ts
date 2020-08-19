@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { GroceryItemsService } from './grocery-items.service';
 import { CreateGroceryItemDto } from './dto/create-grocery-item.dto';
 import { GroceryItem } from './schemas/grocery-item.schema';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('grocery-items')
 export class GroceryItemsController {
