@@ -5,7 +5,7 @@ import {
   UseGuards,
   Get,
   Body,
-  HttpException,
+  HttpCode,
   HttpStatus,
 } from '@nestjs/common';
 import { Request } from 'express';
@@ -14,6 +14,7 @@ import { AuthService } from './auth.service';
 import { User } from '../users/schemas/user.schema';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { AccessTokenDto } from './dto/access-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,18 +22,19 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Req() req: Request): Promise<User> {
+  @HttpCode(HttpStatus.OK)
+  async login(@Req() req: Request): Promise<AccessTokenDto> {
     return this.authService.login(req.user as User);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getMe(@Req() req: Request) {
-    return req.user;
+  async getMe(@Req() req: Request): Promise<User> {
+    return req.user as User;
   }
 
   @Post('register')
-  async register(@Body() registerUserDto: RegisterUserDto) {
+  async register(@Body() registerUserDto: RegisterUserDto): Promise<void> {
     await this.authService.register(registerUserDto);
   }
 }

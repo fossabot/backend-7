@@ -10,7 +10,7 @@ export class GroceryItemsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() createGroceryItemDto: CreateGroceryItemDto) {
+  async create(@Body() createGroceryItemDto: CreateGroceryItemDto): Promise<void> {
     await this.groceryItemsService.create(createGroceryItemDto);
   }
 
