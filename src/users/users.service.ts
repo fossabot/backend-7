@@ -6,18 +6,18 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>) { }
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-    async create(createUserDto: CreateUserDto): Promise<User> {
-        const createdUser = new this.userModel(createUserDto);
-        return createdUser.save();
-    }
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const createdUser = new this.userModel(createUserDto);
+    return createdUser.save();
+  }
 
-    async findAll(): Promise<User[]> {
-        return this.userModel.find().exec();
-    }
+  async findAll(): Promise<User[]> {
+    return this.userModel.find().exec();
+  }
 
-    async findByEmail(email: string): Promise<User> {
-        return this.userModel.findOne({ email: email }).exec();
-    }
+  async findByEmail(email: string): Promise<User> {
+    return this.userModel.findOne({ email: email }).exec();
+  }
 }

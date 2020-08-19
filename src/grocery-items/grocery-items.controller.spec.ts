@@ -4,10 +4,10 @@ import { GroceryItemsService } from './grocery-items.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { GroceryItem } from './schemas/grocery-item.schema';
 
-const groceryItem = <GroceryItem>{ name: 'test', description: '', quantity: 1 }
+const groceryItem = <GroceryItem>{ name: 'test', description: '', quantity: 1 };
 
 class GroceryItemModel {
-  constructor(private data) { }
+  constructor(private data) {}
   save = jest.fn().mockResolvedValue(this.data);
   static find = jest.fn().mockResolvedValue([groceryItem]);
   static findOne = jest.fn().mockResolvedValue(groceryItem);
@@ -22,15 +22,19 @@ describe('GroceryItemsController', () => {
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [GroceryItemsController],
-      providers: [GroceryItemsService,
+      providers: [
+        GroceryItemsService,
         {
           provide: getModelToken('GroceryItem'),
-          useValue: GroceryItemModel
-        }],
+          useValue: GroceryItemModel,
+        },
+      ],
     }).compile();
 
     catsService = moduleRef.get<GroceryItemsService>(GroceryItemsService);
-    catsController = moduleRef.get<GroceryItemsController>(GroceryItemsController);
+    catsController = moduleRef.get<GroceryItemsController>(
+      GroceryItemsController,
+    );
   });
 
   describe('getAll', () => {

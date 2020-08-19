@@ -7,13 +7,12 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDto } from './dto/register-user.dto';
 
-
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService) {
-  }
+    private jwtService: JwtService,
+  ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
@@ -26,12 +25,11 @@ export class AuthService {
 
       const result = {
         email: user.email,
-        _id: user._id
+        _id: user._id,
       };
 
       return result;
     }
-
 
     return null;
   }
@@ -44,13 +42,22 @@ export class AuthService {
   }
 
   async register(registerUserDto: RegisterUserDto) {
-    const existingUser = await this.usersService.findByEmail(registerUserDto.email)
+    const existingUser = await this.usersService.findByEmail(
+      registerUserDto.email,
+    );
     if (existingUser) {
-      throw new HttpException('User with this email address already exists', HttpStatus.CONFLICT);
+      throw new HttpException(
+        'User with this email address already exists',
+        HttpStatus.CONFLICT,
+      );
     }
 
     const hashedPassword = bcrypt.hashSync(registerUserDto.password, 10);
-    const newUser = await this.usersService.create({ email: registerUserDto.email, password: hashedPassword, name: registerUserDto.name });
+    const newUser = await this.usersService.create({
+      email: registerUserDto.email,
+      password: hashedPassword,
+      name: registerUserDto.name,
+    });
     return newUser;
   }
 }

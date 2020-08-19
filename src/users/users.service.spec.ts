@@ -3,10 +3,10 @@ import { UsersService } from './users.service';
 import { User } from './schemas/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
 
-const user = <User>{ email: 'test', password: '', name: '' }
+const user = <User>{ email: 'test', password: '', name: '' };
 
 class UserModel {
-  constructor(private data) { }
+  constructor(private data) {}
   save = jest.fn().mockResolvedValue(this.data);
   static find = jest.fn().mockResolvedValue([user]);
   static findOne = jest.fn().mockResolvedValue(user);
@@ -17,13 +17,15 @@ class UserModel {
 describe('UsersService', () => {
   let service: UsersService;
 
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService, {
-        provide: getModelToken('User'),
-        useValue: UserModel
-      }],
+      providers: [
+        UsersService,
+        {
+          provide: getModelToken('User'),
+          useValue: UserModel,
+        },
+      ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
@@ -37,5 +39,5 @@ describe('UsersService', () => {
     const result = [user];
 
     expect(await service.findAll()).toBe(result);
-  })
+  });
 });

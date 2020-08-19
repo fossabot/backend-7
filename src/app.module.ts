@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -19,9 +19,9 @@ import { AuthModule } from './auth/auth.module';
     }),
     GroceryItemsModule,
     UsersModule,
-    AuthModule],
+    AuthModule,
+  ],
   controllers: [],
   providers: [],
 })
-
-export class AppModule { }
+export class AppModule {}

@@ -6,14 +6,18 @@ import { CreateGroceryItemDto } from './dto/create-grocery-item.dto';
 
 @Injectable()
 export class GroceryItemsService {
-    constructor(@InjectModel(GroceryItem.name) private groceryItemModel: Model<GroceryItem>) { }
+  constructor(
+    @InjectModel(GroceryItem.name) private groceryItemModel: Model<GroceryItem>,
+  ) {}
 
-    async create(createGroceryItemDto: CreateGroceryItemDto): Promise<GroceryItem> {
-        const createdGroceryItem = new this.groceryItemModel(createGroceryItemDto);
-        return createdGroceryItem.save();
-    }
+  async create(
+    createGroceryItemDto: CreateGroceryItemDto,
+  ): Promise<GroceryItem> {
+    const createdGroceryItem = new this.groceryItemModel(createGroceryItemDto);
+    return createdGroceryItem.save();
+  }
 
-    async findAll(): Promise<GroceryItem[]> {
-        return this.groceryItemModel.find().exec();
-    }
+  async findAll(): Promise<GroceryItem[]> {
+    return this.groceryItemModel.find().exec();
+  }
 }

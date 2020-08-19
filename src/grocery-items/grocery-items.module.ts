@@ -6,11 +6,13 @@ import { GroceryItem, GroceryItemSchema } from './schemas/grocery-item.schema';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([{ name: GroceryItem.name, schema: GroceryItemSchema }]),
-        PassportModule.register({ defaultStrategy: 'jwt' })
-    ],
-    controllers: [GroceryItemsController],
-    providers: [GroceryItemsService],
+  imports: [
+    MongooseModule.forFeature([
+      { name: GroceryItem.name, schema: GroceryItemSchema },
+    ]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+  ],
+  controllers: [GroceryItemsController],
+  providers: [GroceryItemsService],
 })
-export class GroceryItemsModule { }
+export class GroceryItemsModule {}
