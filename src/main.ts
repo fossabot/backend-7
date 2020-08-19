@@ -11,6 +11,6 @@ async function bootstrap() {
   app.enableCors();
   // app.use(csurf()); //TODO Enable when added support for CSRF on the frontend
   //TODO add specific config for production grade environments
-  await app.listen(9000);
+  await app.listen(process.env.PORT || 9000);
 }
 bootstrap();
