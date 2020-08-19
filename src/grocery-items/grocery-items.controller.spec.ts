@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { GroceryItemsController } from './grocery-items.controller';
 import { GroceryItemsService } from './grocery-items.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { GroceryItem } from './schemas/grocery-item.schema';
+import { GroceryItem } from './interfaces/grocery-item.interface';
 
 const groceryItem = <GroceryItem>{ name: 'test', description: '', quantity: 1 };
 
@@ -41,7 +41,9 @@ describe('GroceryItemsController', () => {
     it('should return an array of grocery items', async () => {
       const result = [groceryItem];
 
-      jest.spyOn(catsService, 'findAllByUserId').mockImplementation(async () => result);
+      jest
+        .spyOn(catsService, 'findAllByUserId')
+        .mockImplementation(async () => result);
 
       // expect(await catsController.getAll({} as Request)).toBe(result);
     });

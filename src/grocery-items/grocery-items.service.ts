@@ -21,6 +21,8 @@ export class GroceryItemsService {
       groceryItemDto,
     );
 
+    //TODO https://github.com/jmcdo29/testing-nestjs/tree/master/apps/mongo-sample
+
     return {
       id: createdGroceryItem._id,
       name: createdGroceryItem.name,
