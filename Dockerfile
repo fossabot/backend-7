@@ -1,5 +1,4 @@
-FROM node:14.8.0 AS builder
-
+FROM node:14.8.0
 WORKDIR /usr/src/app
 
 COPY package*.json ./
