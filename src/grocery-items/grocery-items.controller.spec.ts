@@ -42,7 +42,7 @@ describe('GroceryItemsController', () => {
       const result = [groceryItem];
 
       jest
-        .spyOn(catsService, 'findAllByUserId')
+        .spyOn(catsService, 'getAllByOwnerId')
         .mockImplementation(async () => result);
 
       // expect(await catsController.getAll({} as Request)).toBe(result);

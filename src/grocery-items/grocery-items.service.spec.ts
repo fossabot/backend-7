@@ -1,14 +1,3 @@
-/**
- * You'll note that in a lot of this test class we use `to any`
- * rather liberally. Normally I'd be against this, but I don't
- * really want to mock all 59 fields **and** the ones we have
- * defined for our model, so instead we add an `as any` and
- * make those errors magically go away. In all seriousness
- * you may want to use some sort of base file elsewhere that
- * contains all the basic mock fields so you can take that
- * and add your fields on top. Seriously, 59 plus fields is a lot.
- */
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { GroceryItemsService } from './grocery-items.service';
 import { getModelToken } from '@nestjs/mongoose';
@@ -56,30 +45,30 @@ const mockGroceryItemDocument: (mock?: {
 };
 
 const groceryItemsArray: GroceryItem[] = [
-  mockGroceryItem('Ventus', 'a uuid', 'desc', 1, 'root'),
-  mockGroceryItem('Vitani', 'a new uuid', '2', 2, 'root'),
-  mockGroceryItem('Simba', 'the king', '14', 3, 'root'),
+  mockGroceryItem('Potato', '1', 'nice tomato', 1, undefined),
+  mockGroceryItem('Egg', '2', 'boiled egg', 2, undefined),
+  mockGroceryItem('Milk', '3', 'mmmmmilk', 3, undefined),
 ];
 
-const catDocArray = [
+const groceryItemsDocArray = [
   mockGroceryItemDocument({
-    name: 'Ventus',
-    id: 'a uuid',
-    description: 'desc',
+    name: 'Potato',
+    id: '1',
+    description: 'nice tomato',
     quantity: 1,
     userId: 'root',
   }),
   mockGroceryItemDocument({
-    name: 'Vitani',
-    id: 'a new uuid',
-    description: '2',
+    name: 'Egg',
+    id: '2',
+    description: 'boiled egg',
     quantity: 2,
     userId: 'root',
   }),
   mockGroceryItemDocument({
-    name: 'Simba',
-    id: 'the king',
-    description: '14',
+    name: 'Milk',
+    id: '3',
+    description: 'mmmmmilk',
     quantity: 3,
     userId: 'root',
   }),
@@ -103,6 +92,7 @@ describe('GroceryItemService', () => {
             update: jest.fn(),
             create: jest.fn(),
             remove: jest.fn(),
+            deleteOne: jest.fn(),
             exec: jest.fn(),
           },
         },
@@ -125,94 +115,91 @@ describe('GroceryItemService', () => {
 
   it('should return all grocery items for root user', async () => {
     jest.spyOn(model, 'find').mockReturnValue({
-      exec: jest.fn().mockResolvedValueOnce(catDocArray),
+      exec: jest.fn().mockResolvedValueOnce(groceryItemsDocArray),
     } as any);
-    const cats = await service.findAllByUserId('root');
-    expect(cats).toEqual([
-      mockGroceryItem('Ventus', 'a uuid', 'desc', 1, undefined),
-      mockGroceryItem('Vitani', 'a new uuid', '2', 2, undefined),
-      mockGroceryItem('Simba', 'the king', '14', 3, undefined),
-    ]);
+    const groceryItems = await service.getAllByOwnerId('root');
+    expect(groceryItems).toEqual(groceryItemsArray);
   });
-  //   it('should getOne by id', async () => {
-  //     jest.spyOn(model, 'findOne').mockReturnValueOnce(
-  //       createMock<DocumentQuery<CatDoc, CatDoc, unknown>>({
-  //         exec: jest
-  //           .fn()
-  //           .mockResolvedValueOnce(mockCatDoc({ name: 'Ventus', id: 'an id' })),
-  //       }),
-  //     );
-  //     const findMockCat = mockGroceryItem('Ventus', 'an id');
-  //     const foundCat = await service.getOne('an id');
-  //     expect(foundCat).toEqual(findMockCat);
-  //   });
-  //   it('should getOne by name', async () => {
-  //     jest.spyOn(model, 'findOne').mockReturnValueOnce(
-  //       createMock<DocumentQuery<CatDoc, CatDoc, unknown>>({
-  //         exec: jest
-  //           .fn()
-  //           .mockResolvedValueOnce(
-  //             mockCatDoc({ name: 'Mufasa', id: 'the dead king' }),
-  //           ),
-  //       }),
-  //     );
-  //     const findMockCat = mockGroceryItem('Mufasa', 'the dead king');
-  //     const foundCat = await service.getOneByName('Mufasa');
-  //     expect(foundCat).toEqual(findMockCat);
-  //   });
-  it('should insert a new cat', async () => {
+  it('should getOne by id', async () => {
+    jest.spyOn(model, 'findOne').mockReturnValueOnce(
+      createMock<
+        DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
+      >({
+        exec: jest.fn().mockResolvedValueOnce(
+          mockGroceryItemDocument({
+            name: 'Potato',
+            id: '123',
+            quantity: 1,
+            userId: 'root',
+          }),
+        ),
+      }),
+    );
+    const findMockGroceryItem = mockGroceryItem(
+      'Potato',
+      '123',
+      undefined,
+      1,
+      undefined,
+    );
+    const foundGroceryItem = await service.getOneById('123');
+    expect(foundGroceryItem).toEqual(findMockGroceryItem);
+  });
+  it('should insert a new grocery item', async () => {
     jest.spyOn(model, 'create').mockResolvedValueOnce({
-      _id: 'some id',
-      name: 'Oliver',
+      _id: '1',
+      name: 'Potato',
       quantity: 1,
-      description: 'Tabby',
+      description: 'can make chips out of it',
       userId: 'user',
     } as any); // dreaded as any, but it can't be helped
-    const newCat = await service.create(
+    const newCat = await service.createNew(
       {
-        name: 'Oliver',
+        name: 'Potato',
         quantity: 1,
-        description: 'Tabby',
+        description: 'can make chips out of it',
       },
       'user',
     );
     expect(newCat).toEqual(
-      mockGroceryItem('Oliver', 'some id', 'Tabby', 1, undefined),
+      mockGroceryItem('Potato', '1', 'can make chips out of it', 1, undefined),
     );
   });
-  //   it('should update a cat successfully', async () => {
-  //     jest.spyOn(model, 'update').mockResolvedValueOnce(true);
-  //     jest.spyOn(model, 'findOne').mockReturnValueOnce(
-  //       createMock<DocumentQuery<CatDoc, CatDoc, unknown>>({
-  //         exec: jest.fn().mockResolvedValueOnce({
-  //           _id: lasagna,
-  //           name: 'Garfield',
-  //           breed: 'Tabby',
-  //           age: 42,
-  //         }),
-  //       }),
-  //     );
-  //     const updatedCat = await service.updateOne({
-  //       _id: lasagna,
-  //       name: 'Garfield',
-  //       breed: 'Tabby',
-  //       age: 42,
-  //     });
-  //     expect(updatedCat).toEqual(
-  //       mockGroceryItem('Garfield', lasagna, 42, 'Tabby'),
-  //     );
-  //   });
-  //   it('should delete a cat successfully', async () => {
-  //     // really just returning a truthy value here as we aren't doing any logic with the return
-  //     jest.spyOn(model, 'remove').mockResolvedValueOnce(true as any);
-  //     expect(await service.deleteOne('a bad id')).toEqual({ deleted: true });
-  //   });
-  //   it('should not delete a cat', async () => {
-  //     // really just returning a falsy value here as we aren't doing any logic with the return
-  //     jest.spyOn(model, 'remove').mockRejectedValueOnce(new Error('Bad delete'));
-  //     expect(await service.deleteOne('a bad id')).toEqual({
-  //       deleted: false,
-  //       message: 'Bad delete',
-  //     });
-  //   });
+  it('should update a grocery item successfully', async () => {
+    jest.spyOn(model, 'update').mockResolvedValueOnce(true);
+    jest.spyOn(model, 'findOne').mockReturnValueOnce(
+      createMock<
+        DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
+      >({
+        exec: jest.fn().mockResolvedValueOnce({
+          _id: '1',
+          name: 'Potato',
+          description: 'chips',
+          quantity: 1.5,
+        }),
+      }),
+    );
+    const updatedGroceryItem = await service.updateOne({
+      _id: '1',
+      name: 'Potato',
+      description: 'chips',
+      quantity: 1.5,
+    });
+    expect(updatedGroceryItem).toEqual(
+      mockGroceryItem('Potato', '1', 'chips', 1.5),
+    );
+  });
+    it('should delete a grocery item successfully', async () => {
+      // really just returning a truthy value here as we aren't doing any logic with the return
+      jest.spyOn(model, 'deleteOne').mockResolvedValueOnce(true as any);
+      expect(await service.deleteOne('a good id')).toEqual({ deleted: true });
+    });
+    it('should not delete a grocery item', async () => {+
+      // really just returning a falsy value here as we aren't doing any logic with the return
+      jest.spyOn(model, 'deleteOne').mockRejectedValueOnce(new Error('Bad delete'));
+      expect(await service.deleteOne('a bad id')).toEqual({
+        deleted: false,
+        message: 'Bad delete',
+      });
+    });
 });

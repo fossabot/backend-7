@@ -17,7 +17,7 @@ export class GroceryItemsController {
     @Req() req: Request,
   ): Promise<void> {
     const currentUser = req.user as User;
-    await this.groceryItemsService.create(
+    await this.groceryItemsService.createNew(
       createGroceryItemDto,
       currentUser._id,
     );
@@ -27,6 +27,6 @@ export class GroceryItemsController {
   @UseGuards(JwtAuthGuard)
   async getAll(@Req() req: Request): Promise<GroceryItem[]> {
     const currentUser = req.user as User;
-    return this.groceryItemsService.findAllByUserId(currentUser._id);
+    return this.groceryItemsService.getAllByOwnerId(currentUser._id);
   }
 }
