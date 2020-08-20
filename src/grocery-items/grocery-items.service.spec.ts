@@ -142,7 +142,7 @@ describe('GroceryItemService', () => {
       1,
       undefined,
     );
-    const foundGroceryItem = await service.getOneById('123');
+    const foundGroceryItem = await service.getOneById('123', 'root');
     expect(foundGroceryItem).toEqual(findMockGroceryItem);
   });
   it('should insert a new grocery item', async () => {

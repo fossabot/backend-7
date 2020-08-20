@@ -1,5 +1,9 @@
 import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { GroceryItem } from './interfaces/grocery-item.interface';
 import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
@@ -15,10 +19,13 @@ export interface IGroceryItemsService {
     groceryItemDto: GroceryItemDto,
     ownerId: string,
   ): Promise<GroceryItem>;
-  updateOne(groceryItemDto: GroceryItemDto): Promise<GroceryItem>;
+  updateOne(
+    groceryItemDto: GroceryItemDto,
+    currentUserId: string,
+  ): Promise<GroceryItem>;
   getAllByOwnerId(ownerId: string): Promise<GroceryItem[]>;
-  getOneById(id: string): Promise<GroceryItem>;
-  deleteOne(id: string): Promise<DeleteResult>;
+  getOneById(id: string, currentUserId: string): Promise<GroceryItem>;
+  deleteOne(id: string, currentUserId: string): Promise<DeleteResult>;
 }
 
 @Injectable()
@@ -45,10 +52,28 @@ export class GroceryItemsService implements IGroceryItemsService {
     };
   }
 
-  async updateOne(groceryItemDto: GroceryItemDto): Promise<GroceryItem> {
+  async updateOne(
+    groceryItemDto: GroceryItemDto,
+    currentUserId: string,
+  ): Promise<GroceryItem> {
     const { _id } = groceryItemDto;
-    this.groceryItemModel.update({ _id }, groceryItemDto);
-    return this.getOneById(_id);
+
+    const existingGroceryItem = await this.groceryItemModel
+      .findOne({ _id })
+      .exec();
+
+    if (!existingGroceryItem) {
+      throw new NotFoundException("The record with given id doesn't exist");
+    }
+
+    if (existingGroceryItem.userId.toString() !== currentUserId) {
+      throw new ForbiddenException(
+        "You don't have permission to access this object",
+      );
+    }
+
+    await this.groceryItemModel.updateOne({ _id }, groceryItemDto);
+    return this.getOneById(_id, currentUserId);
   }
 
   async getAllByOwnerId(userId: string): Promise<GroceryItem[]> {
@@ -64,8 +89,19 @@ export class GroceryItemsService implements IGroceryItemsService {
     }));
   }
 
-  async getOneById(id: string): Promise<GroceryItem> {
+  async getOneById(id: string, currentUserId: string): Promise<GroceryItem> {
     const groceryItem = await this.groceryItemModel.findOne({ _id: id }).exec();
+
+    if (!groceryItem) {
+      throw new NotFoundException("The record with given id doesn't exist");
+    }
+
+    if (groceryItem.userId.toString() !== currentUserId) {
+      throw new ForbiddenException(
+        "You don't have permission to access this object",
+      );
+    }
+
     return {
       id: groceryItem._id,
       name: groceryItem.name,
@@ -74,7 +110,21 @@ export class GroceryItemsService implements IGroceryItemsService {
     };
   }
 
-  async deleteOne(id: string): Promise<DeleteResult> {
+  async deleteOne(id: string, currentUserId: string): Promise<DeleteResult> {
+    const existingGroceryItem = await this.groceryItemModel
+      .findOne({ _id: id })
+      .exec();
+
+    if (!existingGroceryItem) {
+      throw new NotFoundException("The record with given id doesn't exist");
+    }
+
+    if (existingGroceryItem.userId.toString() !== currentUserId) {
+      throw new ForbiddenException(
+        "You don't have permission to access this object",
+      );
+    }
+
     try {
       await this.groceryItemModel.deleteOne({ _id: id });
       return { deleted: true };
