@@ -90,6 +90,8 @@ describe('GroceryItemService', () => {
             find: jest.fn(),
             findOne: jest.fn(),
             update: jest.fn(),
+            updateOne: jest.fn(),
+            findOneAndUpdate: jest.fn(),
             create: jest.fn(),
             remove: jest.fn(),
             deleteOne: jest.fn(),
@@ -166,8 +168,8 @@ describe('GroceryItemService', () => {
     );
   });
   it('should update a grocery item successfully', async () => {
-    jest.spyOn(model, 'update').mockResolvedValueOnce(true);
-    jest.spyOn(model, 'findOne').mockReturnValueOnce(
+    jest.spyOn(model, 'updateOne').mockResolvedValueOnce(true);
+    jest.spyOn(model, 'findOneAndUpdate').mockReturnValueOnce(
       createMock<
         DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
       >({

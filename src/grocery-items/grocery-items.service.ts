@@ -72,8 +72,9 @@ export class GroceryItemsService implements IGroceryItemsService {
       );
     }
 
-    await this.groceryItemModel.updateOne({ _id }, groceryItemDto);
-    return this.getOneById(_id, currentUserId);
+    return await this.groceryItemModel.findOneAndUpdate({_id}, groceryItemDto);
+    // await this.groceryItemModel.updateOne({ _id }, groceryItemDto);
+    // return this.getOneById(_id, currentUserId);
   }
 
   async getAllByOwnerId(userId: string): Promise<GroceryItem[]> {
