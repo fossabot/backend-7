@@ -33,7 +33,7 @@ export class GroceryItemsService implements IGroceryItemsService {
   constructor(
     @InjectModel('GroceryItem')
     private readonly groceryItemModel: Model<GroceryItemDocument>,
-  ) {}
+  ) { }
 
   async createNew(
     groceryItemDto: GroceryItemDto,
@@ -72,9 +72,8 @@ export class GroceryItemsService implements IGroceryItemsService {
       );
     }
 
-    return await this.groceryItemModel.findOneAndUpdate({_id}, groceryItemDto);
-    // await this.groceryItemModel.updateOne({ _id }, groceryItemDto);
-    // return this.getOneById(_id, currentUserId);
+    await this.groceryItemModel.findOneAndUpdate({ _id }, groceryItemDto).exec();
+    return await this.getOneById(_id, currentUserId)
   }
 
   async getAllByOwnerId(userId: string): Promise<GroceryItem[]> {
@@ -127,7 +126,7 @@ export class GroceryItemsService implements IGroceryItemsService {
     }
 
     try {
-      await this.groceryItemModel.deleteOne({ _id: id });
+      await this.groceryItemModel.deleteOne({ _id: id }).exec();
       return { deleted: true };
     } catch (err) {
       return { deleted: false, message: err.message };

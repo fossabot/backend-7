@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get('MONGO_URL'),
+        useFindAndModify: false
       }),
       inject: [ConfigService],
     }),

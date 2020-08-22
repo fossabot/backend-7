@@ -35,14 +35,14 @@ const mockGroceryItemDocument: (mock?: {
   quantity: number;
   userId: string;
 }) => {
-  return {
-    name: mock.name,
-    _id: mock.id,
-    description: mock.description,
-    quantity: mock.quantity,
-    userId: mock.userId,
+    return {
+      name: mock.name,
+      _id: mock.id,
+      description: mock.description,
+      quantity: mock.quantity,
+      userId: mock.userId,
+    };
   };
-};
 
 const groceryItemsArray: GroceryItem[] = [
   mockGroceryItem('Potato', '1', 'nice tomato', 1, undefined),
@@ -169,6 +169,19 @@ describe('GroceryItemService', () => {
   });
   it('should update a grocery item successfully', async () => {
     jest.spyOn(model, 'updateOne').mockResolvedValueOnce(true);
+    jest.spyOn(model, 'findOne').mockResolvedValueOnce(
+      createMock<
+        DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
+      >({
+        exec: jest.fn().mockResolvedValueOnce({
+          _id: '1',
+          name: 'Potato',
+          description: 'chips',
+          quantity: 1.5,
+          userId: 'root'
+        }),
+      }),
+    )
     jest.spyOn(model, 'findOneAndUpdate').mockReturnValueOnce(
       createMock<
         DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
@@ -192,17 +205,18 @@ describe('GroceryItemService', () => {
       mockGroceryItem('Potato', '1', 'chips', 1.5),
     );
   });
-    it('should delete a grocery item successfully', async () => {
-      // really just returning a truthy value here as we aren't doing any logic with the return
-      jest.spyOn(model, 'deleteOne').mockResolvedValueOnce(true as any);
-      expect(await service.deleteOne('a good id', 'root')).toEqual({ deleted: true });
+  it('should delete a grocery item successfully', async () => {
+    // really just returning a truthy value here as we aren't doing any logic with the return
+    jest.spyOn(model, 'deleteOne').mockResolvedValueOnce(true as any);
+    expect(await service.deleteOne('a good id', 'root')).toEqual({ deleted: true });
+  });
+  it('should not delete a grocery item', async () => {
+    +
+    // really just returning a falsy value here as we aren't doing any logic with the return
+    jest.spyOn(model, 'deleteOne').mockRejectedValueOnce(new Error('Bad delete'));
+    expect(await service.deleteOne('a bad id', 'root')).toEqual({
+      deleted: false,
+      message: 'Bad delete',
     });
-    it('should not delete a grocery item', async () => {+
-      // really just returning a falsy value here as we aren't doing any logic with the return
-      jest.spyOn(model, 'deleteOne').mockRejectedValueOnce(new Error('Bad delete'));
-      expect(await service.deleteOne('a bad id', 'root')).toEqual({
-        deleted: false,
-        message: 'Bad delete',
-      });
-    });
+  });
 });
