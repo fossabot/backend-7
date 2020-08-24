@@ -39,21 +39,21 @@ describe('GroceryItemsController', () => {
                 (groceryItemDto: GroceryItemDto, currentUserId: string) =>
                   Promise.resolve({ id: 'a uuid', ...groceryItemDto }),
               ),
-            getAllForCurrentUser: jest.fn().mockImplementation(() =>
+            getAllByOwnerId: jest.fn().mockImplementation((userId: string) =>
               Promise.resolve([
                 {
                   id: '1',
                   name: 'test',
                   description: 'desc',
                   quantity: 1,
-                  userId: 'root',
+                  userId: userId,
                 },
                 {
                   id: '2',
                   name: 'test2',
                   description: 'desc2',
                   quantity: 1.5,
-                  userId: 'root',
+                  userId: userId,
                 },
               ]),
             ),
@@ -92,7 +92,7 @@ describe('GroceryItemsController', () => {
       const result = [groceryItem];
 
       jest
-        .spyOn(groceryItemsService, 'getAllForCurrentUser')
+        .spyOn(groceryItemsService, 'getAllByOwnerId')
         .mockImplementation(async () => result);
 
       // expect(await catsController.getAll({} as Request)).toBe(result);
