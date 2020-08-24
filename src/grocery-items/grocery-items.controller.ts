@@ -61,7 +61,7 @@ export class GroceryItemsController {
     return this.groceryItemsService.updateOne(groceryItem, currentUser._id);
   }
 
-  @Delete("/:id")
+  @Delete('/:id')
   @UseGuards(JwtAuthGuard)
   async delete(
     @Param('id') id: string,

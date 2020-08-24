@@ -28,6 +28,6 @@ describe('Auth Controller', () => {
 
   it('should be defined', () => {
     // expect(controller).toBeDefined();
-    expect(true).toBe(true)
+    expect(true).toBe(true);
   });
 });

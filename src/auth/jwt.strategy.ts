@@ -5,15 +5,15 @@ import { ConfigService } from '@nestjs/config';
 import { jwtConstants } from './constants';
 
 interface JWTValidationObject {
-  _id: string,
-  email: string
+  _id: string;
+  email: string;
 }
 
 interface JWTPayload {
-  username: string,
-  sub: string,
-  iat: number,
-  exp: number
+  username: string;
+  sub: string;
+  iat: number;
+  exp: number;
 }
 
 @Injectable()
