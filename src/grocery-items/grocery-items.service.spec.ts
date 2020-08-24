@@ -168,27 +168,19 @@ describe('GroceryItemService', () => {
     );
   });
   it('should update a grocery item successfully', async () => {
-    jest.spyOn(model, 'updateOne').mockResolvedValueOnce(true);
-    jest.spyOn(model, 'findOne').mockReturnValueOnce(
+    jest.spyOn(model, 'updateOne').mockReturnValueOnce(
       createMock<
         DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
       >({
-        exec: jest.fn().mockResolvedValueOnce(
-          mockGroceryItemDocument({
-            id: '1',
-            name: 'Potato',
-            description: 'chips',
-            quantity: 1.5,
-            userId: 'root',
-          }),
-        ),
+        exec: jest.fn(),
       }),
     );
-    jest.spyOn(model, 'findOneAndUpdate').mockReturnValueOnce(
+
+    jest.spyOn(model, 'findOne').mockReturnValue(
       createMock<
         DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
       >({
-        exec: jest.fn().mockResolvedValueOnce(
+        exec: jest.fn().mockResolvedValue(
           mockGroceryItemDocument({
             id: '1',
             name: 'Potato',
