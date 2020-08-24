@@ -33,7 +33,7 @@ export class GroceryItemsService implements IGroceryItemsService {
   constructor(
     @InjectModel('GroceryItem')
     private readonly groceryItemModel: Model<GroceryItemDocument>,
-  ) { }
+  ) {}
 
   async createNew(
     groceryItemDto: GroceryItemDto,
@@ -72,8 +72,10 @@ export class GroceryItemsService implements IGroceryItemsService {
       );
     }
 
-    await this.groceryItemModel.findOneAndUpdate({ _id }, groceryItemDto).exec();
-    return await this.getOneById(_id, currentUserId)
+    await this.groceryItemModel
+      .findOneAndUpdate({ _id }, groceryItemDto)
+      .exec();
+    return await this.getOneById(_id, currentUserId);
   }
 
   async getAllByOwnerId(userId: string): Promise<GroceryItem[]> {
