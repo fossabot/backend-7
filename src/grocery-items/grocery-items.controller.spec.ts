@@ -3,6 +3,7 @@ import { GroceryItemsController } from './grocery-items.controller';
 import { GroceryItemsService } from './grocery-items.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { GroceryItem } from './interfaces/grocery-item.interface';
+import { GroceryItemDto } from './dto/grocery-item.dto';
 
 const groceryItem = <GroceryItem>{ name: 'test', description: '', quantity: 1 };
 
@@ -16,14 +17,61 @@ class GroceryItemModel {
 }
 
 describe('GroceryItemsController', () => {
-  let catsController: GroceryItemsController;
-  let catsService: GroceryItemsService;
+  let groceryItemsController: GroceryItemsController;
+  let groceryItemsService: GroceryItemsService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [GroceryItemsController],
       providers: [
-        GroceryItemsService,
+        {
+          provide: GroceryItemsService,
+          useValue: {
+            createNew: jest
+              .fn()
+              .mockImplementation(
+                (groceryItemDto: GroceryItemDto, ownerId: string) =>
+                  Promise.resolve({ id: 'a uuid', ...groceryItemDto }),
+              ),
+            updateOne: jest
+              .fn()
+              .mockImplementation(
+                (groceryItemDto: GroceryItemDto, currentUserId: string) =>
+                  Promise.resolve({ id: 'a uuid', ...groceryItemDto }),
+              ),
+            getAllForCurrentUser: jest.fn().mockImplementation(() =>
+              Promise.resolve([
+                {
+                  id: '1',
+                  name: 'test',
+                  description: 'desc',
+                  quantity: 1,
+                  userId: 'root',
+                },
+                {
+                  id: '2',
+                  name: 'test2',
+                  description: 'desc2',
+                  quantity: 1.5,
+                  userId: 'root',
+                },
+              ]),
+            ),
+            getOneById: jest
+              .fn()
+              .mockImplementation((id: string, currentUserId: string) =>
+                Promise.resolve({
+                  id,
+                  userId: currentUserId,
+                  name: 'test',
+                  description: 'test',
+                  quantity: 1,
+                }),
+              ),
+
+            deleteOne: jest.fn().mockResolvedValue({ deleted: true }),
+          },
+        },
         {
           provide: getModelToken('GroceryItem'),
           useValue: GroceryItemModel,
@@ -31,8 +79,10 @@ describe('GroceryItemsController', () => {
       ],
     }).compile();
 
-    catsService = moduleRef.get<GroceryItemsService>(GroceryItemsService);
-    catsController = moduleRef.get<GroceryItemsController>(
+    groceryItemsService = moduleRef.get<GroceryItemsService>(
+      GroceryItemsService,
+    );
+    groceryItemsController = moduleRef.get<GroceryItemsController>(
       GroceryItemsController,
     );
   });
@@ -42,7 +92,7 @@ describe('GroceryItemsController', () => {
       const result = [groceryItem];
 
       jest
-        .spyOn(catsService, 'getAllByOwnerId')
+        .spyOn(groceryItemsService, 'getAllForCurrentUser')
         .mockImplementation(async () => result);
 
       // expect(await catsController.getAll({} as Request)).toBe(result);
