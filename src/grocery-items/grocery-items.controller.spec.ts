@@ -105,4 +105,18 @@ describe('GroceryItemsController', () => {
       ])
     });
   });
+  describe('getById', () => {
+    it('should return a single grocery item', async () => {
+      const groceryItem = await groceryItemsController.getById('1', mockRequestObject())
+      expect(groceryItem).toEqual(
+        {
+          id: '1',
+          userId: 'root',
+          name: 'test',
+          description: 'test',
+          quantity: 1,
+        }
+      )
+    });
+  });
 });
