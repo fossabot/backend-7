@@ -26,9 +26,9 @@ export class GroceryItemsController {
   async create(
     @Body() createGroceryItemDto: CreateGroceryItemDto,
     @Req() req: Request,
-  ): Promise<void> {
+  ): Promise<GroceryItem> {
     const currentUser = req.user as User;
-    await this.groceryItemsService.createNew(
+    return await this.groceryItemsService.createNew(
       createGroceryItemDto,
       currentUser._id,
     );
