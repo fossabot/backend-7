@@ -4,16 +4,13 @@ import { GroceryItemsService } from './grocery-items.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { GroceryItem } from './interfaces/grocery-item.interface';
 import { GroceryItemDto } from './dto/grocery-item.dto';
+import { createMock } from '@golevelup/nestjs-testing';
+import { Request } from 'express'
 
 const groceryItem = <GroceryItem>{ name: 'test', description: '', quantity: 1 };
 
-class GroceryItemModel {
-  constructor(private data) {}
-  save = jest.fn().mockResolvedValue(this.data);
-  static find = jest.fn().mockResolvedValue([groceryItem]);
-  static findOne = jest.fn().mockResolvedValue(groceryItem);
-  static findOneAndUpdate = jest.fn().mockResolvedValue(groceryItem);
-  static deleteOne = jest.fn().mockResolvedValue(true);
+const mockRequestObject = () => {
+  return createMock<Request>({ user: { _id: 'root' } })
 }
 
 describe('GroceryItemsController', () => {
@@ -72,10 +69,6 @@ describe('GroceryItemsController', () => {
             deleteOne: jest.fn().mockResolvedValue({ deleted: true }),
           },
         },
-        {
-          provide: getModelToken('GroceryItem'),
-          useValue: GroceryItemModel,
-        },
       ],
     }).compile();
 
@@ -87,15 +80,29 @@ describe('GroceryItemsController', () => {
     );
   });
 
+  it('should be defined', () => {
+    expect(groceryItemsController).toBeDefined();
+  });
+
   describe('getAll', () => {
     it('should return an array of grocery items', async () => {
-      const result = [groceryItem];
-
-      jest
-        .spyOn(groceryItemsService, 'getAllByOwnerId')
-        .mockImplementation(async () => result);
-
-      // expect(await catsController.getAll({} as Request)).toBe(result);
+      const groceryItems = await groceryItemsController.getAll(mockRequestObject())
+      expect(groceryItems).toEqual([
+        {
+          id: '1',
+          name: 'test',
+          description: 'desc',
+          quantity: 1,
+          userId: 'root',
+        },
+        {
+          id: '2',
+          name: 'test2',
+          description: 'desc2',
+          quantity: 1.5,
+          userId: 'root',
+        },
+      ])
     });
   });
 });
