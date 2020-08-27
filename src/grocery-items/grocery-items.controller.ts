@@ -15,7 +15,6 @@ import { CreateGroceryItemDto } from './dto/create-grocery-item.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../users/schemas/user.schema';
 import { GroceryItem } from './interfaces/grocery-item.interface';
-import { GroceryItemDto } from './dto/grocery-item.dto';
 
 @Controller('grocery-items')
 export class GroceryItemsController {
