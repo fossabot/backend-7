@@ -3,15 +3,11 @@ import {
   Injectable,
   ForbiddenException,
   NotFoundException,
-  Scope,
-  Inject,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { GroceryItem } from './interfaces/grocery-item.interface';
 import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 import { GroceryItemDto } from './dto/grocery-item.dto';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
 
 export interface DeleteResult {
   deleted: boolean;

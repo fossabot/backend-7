@@ -6,7 +6,6 @@ import { createMock } from '@golevelup/nestjs-testing';
 import { Request } from 'express';
 import { CreateGroceryItemDto } from './dto/create-grocery-item.dto';
 
-
 const mockRequestObject = () => {
   return createMock<Request>({ user: { _id: 'root' } });
 };
@@ -179,7 +178,7 @@ describe('GroceryItemsController', () => {
           mockRequestObject(),
         ),
       ).toEqual({ deleted: false });
-      expect(deleteSpy).toBeCalledWith('a uuid that does not exist', "root");
+      expect(deleteSpy).toBeCalledWith('a uuid that does not exist', 'root');
     });
   });
 });
