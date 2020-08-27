@@ -194,7 +194,7 @@ describe('GroceryItemService', () => {
 
     const updatedGroceryItem = await service.updateOne(
       {
-        _id: '1',
+        id: '1',
         name: 'Potato',
         description: 'chips',
         quantity: 1.5,
