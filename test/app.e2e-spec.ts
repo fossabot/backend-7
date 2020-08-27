@@ -116,16 +116,14 @@ describe('App (e2e)', () => {
         ...newGroceryItem,
         id: expect.any(String),
       });
-      console.log(groceryItem.body);
       const groceryItemV2 = await request(app.getHttpServer())
         .put(`/grocery-items`)
         .set('Authorization', 'Bearer ' + access_token)
         .send({
-          _id: groceryItem.body.id,
+          id: groceryItem.body.id,
           quantity: 5,
         })
         .expect(200);
-      console.log(groceryItemV2.body);
       expect(groceryItemV2.body).toEqual({ ...data.body, quantity: 5 });
       const updatedGroceryItem = await request(app.getHttpServer())
         .get(`/grocery-items/${groceryItem.body.id}`)
