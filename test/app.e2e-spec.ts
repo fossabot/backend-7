@@ -45,20 +45,19 @@ describe('App (e2e)', () => {
 
     // small script to remove all database entries for cat between tests
     beforeEach(async () => {
-      // const uncleared = await request(app.getHttpServer()).get(
-      //   '/grocery-items',
-      // );
-      // await Promise.all(
-      //   uncleared.body.map(async (cat) => {
-      //     return request(app.getHttpServer()).delete(
-      //       `/grocery-items/${cat.id}`,
-      //     );
-      //   }),
-      // );
-      //TODO clear whole database after tests
+      const uncleared = await request(app.getHttpServer())
+        .get('/grocery-items')
+        .set('Authorization', 'Bearer ' + access_token);
+      await Promise.all(
+        uncleared.body.map(async (cat) => {
+          return request(app.getHttpServer()).delete(
+            `/grocery-items/${cat.id}`,
+          );
+        }),
+      );
     });
 
-    it('Create new user, post grocery item, get all, get by id, delete', async () => {
+    it('post grocery item, get all, get by id, delete', async () => {
       const newGroceryItem = {
         name: 'Test',
         description: 'Russian Blue',
@@ -88,6 +87,51 @@ describe('App (e2e)', () => {
         .set('Authorization', 'Bearer ' + access_token)
         .expect(200);
       expect(sampleGroceryItem.body).toEqual(data.body);
+      return request(app.getHttpServer())
+        .delete(`/grocery-items/${data.body.id}`)
+        .set('Authorization', 'Bearer ' + access_token)
+        .expect(200)
+        .expect({ deleted: true });
+    });
+    it('post grocery item, get by id, update, get by id, delete', async () => {
+      const newGroceryItem = {
+        name: 'Test',
+        description: 'Russian Blue',
+        quantity: 1.5,
+      };
+      const data = await request(app.getHttpServer())
+        .post('/grocery-items')
+        .set('Authorization', 'Bearer ' + access_token)
+        .send(newGroceryItem)
+        .expect(201);
+      expect(data.body).toEqual({
+        ...newGroceryItem,
+        id: expect.any(String),
+      });
+      const groceryItem = await request(app.getHttpServer())
+        .get(`/grocery-items/${data.body.id}`)
+        .set('Authorization', 'Bearer ' + access_token)
+        .expect(200);
+      expect(groceryItem.body).toEqual({
+        ...newGroceryItem,
+        id: expect.any(String),
+      });
+      console.log(groceryItem.body);
+      const groceryItemV2 = await request(app.getHttpServer())
+        .put(`/grocery-items`)
+        .set('Authorization', 'Bearer ' + access_token)
+        .send({
+          _id: groceryItem.body.id,
+          quantity: 5,
+        })
+        .expect(200);
+      console.log(groceryItemV2.body);
+      expect(groceryItemV2.body).toEqual({ ...data.body, quantity: 5 });
+      const updatedGroceryItem = await request(app.getHttpServer())
+        .get(`/grocery-items/${groceryItem.body.id}`)
+        .set('Authorization', 'Bearer ' + access_token)
+        .expect(200);
+      expect(updatedGroceryItem.body).toEqual(groceryItemV2.body);
       return request(app.getHttpServer())
         .delete(`/grocery-items/${data.body.id}`)
         .set('Authorization', 'Bearer ' + access_token)

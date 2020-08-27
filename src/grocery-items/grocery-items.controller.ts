@@ -54,7 +54,7 @@ export class GroceryItemsController {
   @Put()
   @UseGuards(JwtAuthGuard)
   async update(
-    @Body() groceryItem: GroceryItemDto,
+    @Body() groceryItem: GroceryItem,
     @Req() req: Request,
   ): Promise<GroceryItem> {
     const currentUser = req.user as User;

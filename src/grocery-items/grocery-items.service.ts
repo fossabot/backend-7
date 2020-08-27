@@ -57,13 +57,13 @@ export class GroceryItemsService implements IGroceryItemsService {
   }
 
   async updateOne(
-    groceryItemDto: GroceryItemDto,
+    groceryItemDto: GroceryItem,
     currentUserId: string,
   ): Promise<GroceryItem> {
-    const { _id } = groceryItemDto;
+    const { id } = groceryItemDto;
 
     const existingGroceryItem = await this.groceryItemModel
-      .findOne({ _id })
+      .findOne({ _id: id })
       .exec();
 
     if (!existingGroceryItem) {
@@ -76,9 +76,9 @@ export class GroceryItemsService implements IGroceryItemsService {
       );
     }
 
-    await this.groceryItemModel.updateOne({ _id }, groceryItemDto).exec();
+    await this.groceryItemModel.updateOne({ _id: id }, groceryItemDto).exec();
 
-    const groceryItem = await this.groceryItemModel.findOne({ _id }).exec();
+    const groceryItem = await this.groceryItemModel.findOne({ _id: id }).exec();
 
     return {
       id: groceryItem._id,
