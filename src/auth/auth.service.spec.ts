@@ -7,6 +7,7 @@ import { User } from '../users/interfaces/user.interface';
 import { UserDocument } from '../users/interfaces/user-document.interface';
 import { UsersService } from '../users/users.service';
 import { JwtModule } from '@nestjs/jwt';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 const mockUser: (
   email?: string,
@@ -151,7 +152,40 @@ describe('AuthService', () => {
       email: 'test@test.com',
       password: 'test',
       name: 'test',
-      _id: expect.any(String)
-    })
+      _id: expect.any(String),
+    });
+  });
+  it('should return conflict when register a user with existing email address', async () => {
+    jest.spyOn(model, 'findOne').mockReturnValue({
+      exec: jest.fn().mockResolvedValueOnce(
+        mockUserDocument({
+          email: 'test@test.com',
+          id: 'id',
+          password:
+            '$2y$12$IZapIA6nVVUK0wQChi1hMeTgKrxLtrIC7YTAqNADbvuVL2MeHJFza',
+          name: 'test',
+        }),
+      ),
+    } as any);
+
+    jest.spyOn(model, 'create').mockResolvedValueOnce({
+      _id: '1',
+      email: 'test@test.com',
+      password: 'test',
+      name: 'test',
+    } as any);
+
+    expect(
+      service.register({
+        email: 'test@test.com',
+        password: 'test',
+        name: 'test',
+      }),
+    ).rejects.toEqual(
+      new HttpException(
+        'User with this email address already exists',
+        HttpStatus.CONFLICT,
+      ),
+    );
   });
 });
