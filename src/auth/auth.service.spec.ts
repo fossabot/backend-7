@@ -129,4 +129,29 @@ describe('AuthService', () => {
     });
     expect(accessToken).toMatchObject({ access_token: expect.any(String) });
   });
+  it('should register new user', async () => {
+    jest.spyOn(model, 'findOne').mockReturnValue({
+      exec: jest.fn().mockResolvedValueOnce(null),
+    } as any);
+
+    jest.spyOn(model, 'create').mockResolvedValueOnce({
+      _id: '1',
+      email: 'test@test.com',
+      password: 'test',
+      name: 'test',
+    } as any);
+
+    const newUser = await service.register({
+      email: 'test@test.com',
+      password: 'test',
+      name: 'test',
+    });
+
+    expect(newUser).toMatchObject({
+      email: 'test@test.com',
+      password: 'test',
+      name: 'test',
+      _id: expect.any(String)
+    })
+  });
 });
