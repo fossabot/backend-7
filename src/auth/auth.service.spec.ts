@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import { User } from '../users/interfaces/user.interface';
 import { UserDocument } from '../users/interfaces/user-document.interface';
 import { UsersService } from '../users/users.service';
-import { JwtService, JwtModule } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 
 const mockUser: (
   email?: string,
@@ -121,5 +121,12 @@ describe('AuthService', () => {
 
     const validatedUser = await service.validateUser('test@test.com', 'test1');
     expect(validatedUser).toBe(null);
+  });
+  it('should return access token on login', async () => {
+    const accessToken = await service.login({
+      email: 'test@test.com',
+      _id: 'id',
+    });
+    expect(accessToken).toMatchObject({ access_token: expect.any(String) });
   });
 });
