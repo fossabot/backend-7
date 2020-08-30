@@ -1,7 +1,9 @@
-version: '3.7'
+version: '3.8'
 services:
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4.0
+    container_name: mongodb
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -9,10 +11,26 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - fridgy_network  
+
   fridgy:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: fridgy
+    restart: unless-stopped
+    environment:
+      - JWT_SECRET=secret
+      - MONGO_URL=mongodb://root:password@mongodb:27017/fridgy?authSource=admin
+    ports:
+      - "9000:9000"
+    networks:
+      - fridgy_network
 
 volumes:
   mongodb_data:
+
+networks:
+  fridgy_network:
+    driver: bridge
