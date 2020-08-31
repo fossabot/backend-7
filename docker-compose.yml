@@ -12,7 +12,7 @@ services:
     volumes:
       - mongodb_data:/data/db
     networks:
-      - fridgy_network  
+      - fridgy_network
 
   fridgy:
     build:
