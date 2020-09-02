@@ -25,11 +25,15 @@ services:
       - MONGO_URL=mongodb://root:password@mongodb:27017/fridgy?authSource=admin
     ports:
       - "9000:9000"
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/home/node/app/node_modules
     networks:
       - fridgy_network
 
 volumes:
   mongodb_data:
+  node_modules:
 
 networks:
   fridgy_network:
