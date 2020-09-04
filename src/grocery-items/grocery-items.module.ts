@@ -4,6 +4,7 @@ import { GroceryItemsController } from './grocery-items.controller';
 import { GroceryItemsService } from './grocery-items.service';
 import { GroceryItemSchema } from './schemas/grocery-item.schema';
 import { PassportModule } from '@nestjs/passport';
+import { GroceryItemsRepository } from './grocery-item.repository';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { PassportModule } from '@nestjs/passport';
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [GroceryItemsController],
-  providers: [GroceryItemsService],
+  providers: [GroceryItemsService, GroceryItemsRepository],
 })
 export class GroceryItemsModule {}

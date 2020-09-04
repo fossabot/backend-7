@@ -5,6 +5,7 @@ import { GroceryItem } from './interfaces/grocery-item.interface';
 import { createMock } from '@golevelup/nestjs-testing';
 import { DocumentQuery, Model } from 'mongoose';
 import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
+import { GroceryItemsRepository } from './grocery-item.repository';
 
 const mockGroceryItem: (
   name?: string,
@@ -97,6 +98,10 @@ describe('GroceryItemService', () => {
             deleteOne: jest.fn(),
             exec: jest.fn(),
           },
+        },
+        {
+          provide: GroceryItemsRepository,
+          useValue: {},
         },
       ],
     }).compile();

@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { GroceryItem } from './interfaces/grocery-item.interface';
 import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 import { GroceryItemDto } from './dto/grocery-item.dto';
+import { GroceryItemsRepository } from './grocery-item.repository';
 
 export interface DeleteResult {
   deleted: boolean;
@@ -33,6 +34,7 @@ export class GroceryItemsService implements IGroceryItemsService {
   constructor(
     @InjectModel('GroceryItem')
     private readonly groceryItemModel: Model<GroceryItemDocument>,
+    private readonly groceryItemsRepository: GroceryItemsRepository,
   ) {}
 
   async createNew(
@@ -49,7 +51,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       name: createdGroceryItem.name,
       quantity: createdGroceryItem.quantity,
       description: createdGroceryItem.description,
-      unit: createdGroceryItem.unit
+      unit: createdGroceryItem.unit,
     };
   }
 
@@ -82,7 +84,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       name: groceryItem.name,
       quantity: groceryItem.quantity,
       description: groceryItem.description,
-      unit: groceryItem.unit
+      unit: groceryItem.unit,
     };
   }
 
@@ -96,7 +98,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       name: groceryItem.name,
       quantity: groceryItem.quantity,
       description: groceryItem.description,
-      unit: groceryItem.unit
+      unit: groceryItem.unit,
     }));
   }
 
@@ -118,7 +120,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       name: groceryItem.name,
       quantity: groceryItem.quantity,
       description: groceryItem.description,
-      unit: groceryItem.unit
+      unit: groceryItem.unit,
     };
   }
 
