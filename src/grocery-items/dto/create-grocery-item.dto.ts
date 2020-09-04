@@ -9,7 +9,6 @@ export class CreateGroceryItemDto {
   @IsNumber()
   readonly quantity: number;
 
-  @IsNotEmpty()
   @IsString()
-  readonly description: string;
+  readonly description?: string;
 }
