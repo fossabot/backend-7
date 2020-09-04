@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreateGroceryItemDto {
   @IsNotEmpty()
@@ -9,6 +9,7 @@ export class CreateGroceryItemDto {
   @IsNumber()
   readonly quantity: number;
 
+  @IsOptional()
   @IsString()
   readonly description?: string;
 }
