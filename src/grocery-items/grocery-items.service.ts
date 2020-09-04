@@ -49,6 +49,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       name: createdGroceryItem.name,
       quantity: createdGroceryItem.quantity,
       description: createdGroceryItem.description,
+      unit: createdGroceryItem.unit
     };
   }
 
@@ -81,6 +82,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       name: groceryItem.name,
       quantity: groceryItem.quantity,
       description: groceryItem.description,
+      unit: groceryItem.unit
     };
   }
 
@@ -94,6 +96,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       name: groceryItem.name,
       quantity: groceryItem.quantity,
       description: groceryItem.description,
+      unit: groceryItem.unit
     }));
   }
 
@@ -115,6 +118,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       name: groceryItem.name,
       quantity: groceryItem.quantity,
       description: groceryItem.description,
+      unit: groceryItem.unit
     };
   }
 

@@ -12,4 +12,8 @@ export class CreateGroceryItemDto {
   @IsOptional()
   @IsString()
   readonly description?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly unit?: string;
 }
