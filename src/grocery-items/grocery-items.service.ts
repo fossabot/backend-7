@@ -42,9 +42,11 @@ export class GroceryItemsService implements IGroceryItemsService {
     ownerId: string,
   ): Promise<GroceryItem> {
     groceryItemDto.userId = ownerId;
-    const createdGroceryItem = await this.groceryItemModel.create(
-      groceryItemDto,
-    );
+    // const createdGroceryItem = await this.groceryItemModel.create(
+    //   groceryItemDto,
+    // );
+
+    const createdGroceryItem = await this.groceryItemsRepository.createOne(groceryItemDto);
 
     return {
       id: createdGroceryItem._id,
@@ -61,9 +63,11 @@ export class GroceryItemsService implements IGroceryItemsService {
   ): Promise<GroceryItem> {
     const { id } = groceryItemDto;
 
-    const existingGroceryItem = await this.groceryItemModel
-      .findOne({ _id: id })
-      .exec();
+    // const existingGroceryItem = await this.groceryItemModel
+    //   .findOne({ _id: id })
+    //   .exec();
+
+    const existingGroceryItem = await this.groceryItemsRepository.findOneById(id);
 
     if (!existingGroceryItem) {
       throw new NotFoundException("The record with given id doesn't exist");
@@ -75,9 +79,11 @@ export class GroceryItemsService implements IGroceryItemsService {
       );
     }
 
-    await this.groceryItemModel.updateOne({ _id: id }, groceryItemDto).exec();
+    // await this.groceryItemModel.updateOne({ _id: id }, groceryItemDto).exec();
+    await this.groceryItemsRepository.updateOneById(id, groceryItemDto);
 
-    const groceryItem = await this.groceryItemModel.findOne({ _id: id }).exec();
+    // const groceryItem = await this.groceryItemModel.findOne({ _id: id }).exec();
+    const groceryItem = await this.groceryItemsRepository.findOneById(id);
 
     return {
       id: groceryItem._id,

@@ -78,6 +78,7 @@ const groceryItemsDocArray = [
 describe('GroceryItemService', () => {
   let service: GroceryItemsService;
   let model: Model<GroceryItemDocument>;
+  let repository: GroceryItemsRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -101,15 +102,20 @@ describe('GroceryItemService', () => {
         },
         {
           provide: GroceryItemsRepository,
-          useValue: {},
+          useValue: {
+            createOne: jest.fn().mockResolvedValue(mockGroceryItem()),
+            findOneById: jest.fn().mockResolvedValue(mockGroceryItem())
+          },
         },
       ],
     }).compile();
 
     service = module.get<GroceryItemsService>(GroceryItemsService);
+    repository = module.get<GroceryItemsRepository>(GroceryItemsRepository);
     model = module.get<Model<GroceryItemDocument>>(
       getModelToken('GroceryItem'),
     );
+    
   });
 
   it('should be defined', () => {
@@ -153,7 +159,7 @@ describe('GroceryItemService', () => {
     expect(foundGroceryItem).toEqual(findMockGroceryItem);
   });
   it('should insert a new grocery item', async () => {
-    jest.spyOn(model, 'create').mockResolvedValueOnce({
+    jest.spyOn(repository, 'createOne').mockResolvedValueOnce({
       _id: '1',
       name: 'Potato',
       quantity: 1,
