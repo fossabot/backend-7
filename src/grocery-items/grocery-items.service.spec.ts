@@ -4,8 +4,9 @@ import { getModelToken } from '@nestjs/mongoose';
 import { GroceryItem } from './interfaces/grocery-item.interface';
 import { createMock } from '@golevelup/nestjs-testing';
 import { DocumentQuery, Model } from 'mongoose';
-import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
+// import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 import { GroceryItemsRepository } from './grocery-item.repository';
+import { IGroceryItemDocument } from './interfaces/igrocery-item-document.interface';
 
 const mockGroceryItem: (
   name?: string,
@@ -29,7 +30,7 @@ const mockGroceryItemDocument: (mock?: {
   description?: string;
   quantity?: number;
   userId?: string;
-}) => Partial<GroceryItemDocument> = (mock?: {
+}) => Partial<IGroceryItemDocument> = (mock?: {
   name: string;
   id: string;
   description: string;
@@ -77,13 +78,14 @@ const groceryItemsDocArray = [
 
 describe('GroceryItemService', () => {
   let service: GroceryItemsService;
-  let model: Model<GroceryItemDocument>;
+  let model: Model<IGroceryItemDocument>;
   let repository: GroceryItemsRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GroceryItemsService,
+        //TODO to delete
         {
           provide: getModelToken('GroceryItem'),
           useValue: {
@@ -103,8 +105,9 @@ describe('GroceryItemService', () => {
         {
           provide: GroceryItemsRepository,
           useValue: {
-            createOne: jest.fn().mockResolvedValue(mockGroceryItem()),
-            findOneById: jest.fn().mockResolvedValue(mockGroceryItem())
+            createOne: jest.fn(),
+            findOneById: jest.fn(),
+            updateOneById: jest.fn()
           },
         },
       ],
@@ -112,10 +115,9 @@ describe('GroceryItemService', () => {
 
     service = module.get<GroceryItemsService>(GroceryItemsService);
     repository = module.get<GroceryItemsRepository>(GroceryItemsRepository);
-    model = module.get<Model<GroceryItemDocument>>(
+    model = module.get<Model<IGroceryItemDocument>>(
       getModelToken('GroceryItem'),
     );
-    
   });
 
   it('should be defined', () => {
@@ -136,7 +138,7 @@ describe('GroceryItemService', () => {
   it('should getOne by id', async () => {
     jest.spyOn(model, 'findOne').mockReturnValueOnce(
       createMock<
-        DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
+        DocumentQuery<IGroceryItemDocument, IGroceryItemDocument, unknown>
       >({
         exec: jest.fn().mockResolvedValueOnce(
           mockGroceryItemDocument({
@@ -179,29 +181,13 @@ describe('GroceryItemService', () => {
     );
   });
   it('should update a grocery item successfully', async () => {
-    jest.spyOn(model, 'updateOne').mockReturnValueOnce(
-      createMock<
-        DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
-      >({
-        exec: jest.fn(),
-      }),
-    );
-
-    jest.spyOn(model, 'findOne').mockReturnValue(
-      createMock<
-        DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
-      >({
-        exec: jest.fn().mockResolvedValue(
-          mockGroceryItemDocument({
-            id: '1',
-            name: 'Potato',
-            description: 'chips',
-            quantity: 1.5,
-            userId: 'root',
-          }),
-        ),
-      }),
-    );
+    jest.spyOn(repository, 'findOneById').mockResolvedValue({
+      _id: '1',
+      name: 'Potato',
+      description: 'chips',
+      quantity: 1.5,
+      userId: 'root',
+    });
 
     const updatedGroceryItem = await service.updateOne(
       {
@@ -220,7 +206,7 @@ describe('GroceryItemService', () => {
     // really just returning a truthy value here as we aren't doing any logic with the return
     jest.spyOn(model, 'findOne').mockReturnValueOnce(
       createMock<
-        DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
+        DocumentQuery<IGroceryItemDocument, IGroceryItemDocument, unknown>
       >({
         exec: jest.fn().mockResolvedValueOnce(
           mockGroceryItemDocument({
@@ -247,7 +233,7 @@ describe('GroceryItemService', () => {
     // really just returning a falsy value here as we aren't doing any logic with the return
     jest.spyOn(model, 'findOne').mockReturnValueOnce(
       createMock<
-        DocumentQuery<GroceryItemDocument, GroceryItemDocument, unknown>
+        DocumentQuery<IGroceryItemDocument, IGroceryItemDocument, unknown>
       >({
         exec: jest.fn().mockResolvedValueOnce(
           mockGroceryItemDocument({

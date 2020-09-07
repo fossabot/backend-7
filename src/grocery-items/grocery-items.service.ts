@@ -63,10 +63,6 @@ export class GroceryItemsService implements IGroceryItemsService {
   ): Promise<GroceryItem> {
     const { id } = groceryItemDto;
 
-    // const existingGroceryItem = await this.groceryItemModel
-    //   .findOne({ _id: id })
-    //   .exec();
-
     const existingGroceryItem = await this.groceryItemsRepository.findOneById(id);
 
     if (!existingGroceryItem) {
@@ -79,10 +75,8 @@ export class GroceryItemsService implements IGroceryItemsService {
       );
     }
 
-    // await this.groceryItemModel.updateOne({ _id: id }, groceryItemDto).exec();
     await this.groceryItemsRepository.updateOneById(id, groceryItemDto);
 
-    // const groceryItem = await this.groceryItemModel.findOne({ _id: id }).exec();
     const groceryItem = await this.groceryItemsRepository.findOneById(id);
 
     return {

@@ -1,4 +1,4 @@
 import { Document } from 'mongoose';
-import { IGroceryItem } from './igrocery-item.interface';
+import { IGroceryItemBase } from './igrocery-item-base.interface';
 
-export interface IGroceryItemDocument extends IGroceryItem, Document {}
+export interface IGroceryItemDocument extends Document, IGroceryItemBase {}

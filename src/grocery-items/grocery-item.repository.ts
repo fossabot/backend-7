@@ -5,13 +5,10 @@ import { IGroceryItem } from './interfaces/igrocery-item.interface';
 import { IGroceryItemDocument } from './interfaces/igrocery-item-document.interface';
 
 export interface IGroceryItemsRepository {
-  findAllByOwnerId(ownerId: string): Promise<IGroceryItemDocument[]>;
-  findOneById(id: string): Promise<IGroceryItemDocument>;
-  createOne(groceryItem: IGroceryItem): Promise<IGroceryItemDocument>;
-  updateOneById(
-    id: string,
-    groceryItem: IGroceryItemDocument,
-  ): Promise<IGroceryItemDocument>;
+  findAllByOwnerId(ownerId: string): Promise<IGroceryItem[]>;
+  findOneById(id: string): Promise<IGroceryItem>;
+  createOne(groceryItem: IGroceryItem): Promise<IGroceryItem>;
+  updateOneById(id: string, groceryItem: IGroceryItem): Promise<IGroceryItem>;
   deleteOne(id: string): Promise<void>;
 }
 
@@ -22,22 +19,22 @@ export class GroceryItemsRepository implements IGroceryItemsRepository {
     private readonly groceryItemModel: Model<IGroceryItemDocument>,
   ) {}
 
-  async findAllByOwnerId(ownerId: string): Promise<IGroceryItemDocument[]> {
+  async findAllByOwnerId(ownerId: string): Promise<IGroceryItem[]> {
     return await this.groceryItemModel.find({ userId: ownerId }).exec();
   }
 
-  async findOneById(id: string): Promise<IGroceryItemDocument> {
+  async findOneById(id: string): Promise<IGroceryItem> {
     return await this.groceryItemModel.findOne({ _id: id }).exec();
   }
 
-  async createOne(groceryItem: IGroceryItem): Promise<IGroceryItemDocument> {
+  async createOne(groceryItem: IGroceryItem): Promise<IGroceryItem> {
     return await this.groceryItemModel.create(groceryItem);
   }
 
   async updateOneById(
     id: string,
     groceryItem: IGroceryItem,
-  ): Promise<IGroceryItemDocument> {
+  ): Promise<IGroceryItem> {
     return await this.groceryItemModel
       .updateOne({ _id: id }, groceryItem)
       .exec();
