@@ -107,6 +107,7 @@ describe('GroceryItemService', () => {
           useValue: {
             createOne: jest.fn(),
             findOneById: jest.fn(),
+            findAllByOwnerId: jest.fn(),
             updateOneById: jest.fn(),
           },
         },
@@ -129,27 +130,20 @@ describe('GroceryItemService', () => {
   });
 
   it('should return all grocery items for root user', async () => {
-    jest.spyOn(model, 'find').mockReturnValue({
-      exec: jest.fn().mockResolvedValueOnce(groceryItemsDocArray),
-    } as any);
+    jest
+      .spyOn(repository, 'findAllByOwnerId')
+      .mockResolvedValue(groceryItemsDocArray as IGroceryItemDocument[]);
     const groceryItems = await service.getAllByOwnerId('root');
     expect(groceryItems).toEqual(groceryItemsArray);
   });
   it('should getOne by id', async () => {
-    jest.spyOn(model, 'findOne').mockReturnValueOnce(
-      createMock<
-        DocumentQuery<IGroceryItemDocument, IGroceryItemDocument, unknown>
-      >({
-        exec: jest.fn().mockResolvedValueOnce(
-          mockGroceryItemDocument({
-            name: 'Potato',
-            id: '123',
-            quantity: 1,
-            userId: 'root',
-          }),
-        ),
-      }),
-    );
+    jest.spyOn(repository, 'findOneById').mockResolvedValue({
+      name: 'Potato',
+      _id: '123',
+      quantity: 1,
+      userId: 'root',
+    });
+
     const findMockGroceryItem = mockGroceryItem(
       'Potato',
       '123',

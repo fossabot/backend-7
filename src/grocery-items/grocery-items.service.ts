@@ -93,9 +93,13 @@ export class GroceryItemsService implements IGroceryItemsService {
   }
 
   async getAllByOwnerId(userId: string): Promise<GroceryItem[]> {
-    const groceryItems = await this.groceryItemModel
-      .find({ userId }, { __v: 0, userId: 0 })
-      .exec();
+    // const groceryItems = await this.groceryItemModel
+    //   .find({ userId }, { __v: 0, userId: 0 })
+    //   .exec();
+
+    const groceryItems = await this.groceryItemsRepository.findAllByOwnerId(
+      userId,
+    );
 
     return groceryItems.map((groceryItem) => ({
       id: groceryItem._id,
@@ -107,7 +111,8 @@ export class GroceryItemsService implements IGroceryItemsService {
   }
 
   async getOneById(id: string, currentUserId: string): Promise<GroceryItem> {
-    const groceryItem = await this.groceryItemModel.findOne({ _id: id }).exec();
+    // const groceryItem = await this.groceryItemModel.findOne({ _id: id }).exec();
+    const groceryItem = await this.groceryItemsRepository.findOneById(id);
 
     if (!groceryItem) {
       throw new NotFoundException("The record with given id doesn't exist");
