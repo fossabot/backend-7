@@ -46,7 +46,9 @@ export class GroceryItemsService implements IGroceryItemsService {
     //   groceryItemDto,
     // );
 
-    const createdGroceryItem = await this.groceryItemsRepository.createOne(groceryItemDto);
+    const createdGroceryItem = await this.groceryItemsRepository.createOne(
+      groceryItemDto,
+    );
 
     return {
       id: createdGroceryItem._id,
@@ -63,7 +65,9 @@ export class GroceryItemsService implements IGroceryItemsService {
   ): Promise<GroceryItem> {
     const { id } = groceryItemDto;
 
-    const existingGroceryItem = await this.groceryItemsRepository.findOneById(id);
+    const existingGroceryItem = await this.groceryItemsRepository.findOneById(
+      id,
+    );
 
     if (!existingGroceryItem) {
       throw new NotFoundException("The record with given id doesn't exist");

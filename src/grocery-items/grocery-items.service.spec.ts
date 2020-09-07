@@ -107,7 +107,7 @@ describe('GroceryItemService', () => {
           useValue: {
             createOne: jest.fn(),
             findOneById: jest.fn(),
-            updateOneById: jest.fn()
+            updateOneById: jest.fn(),
           },
         },
       ],
