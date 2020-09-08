@@ -134,9 +134,9 @@ export class GroceryItemsService implements IGroceryItemsService {
   }
 
   async deleteOne(id: string, currentUserId: string): Promise<DeleteResult> {
-    const existingGroceryItem = await this.groceryItemModel
-      .findOne({ _id: id })
-      .exec();
+    const existingGroceryItem = await this.groceryItemsRepository.findOneById(
+      id,
+    );
 
     if (!existingGroceryItem) {
       throw new NotFoundException("The record with given id doesn't exist");
@@ -149,7 +149,7 @@ export class GroceryItemsService implements IGroceryItemsService {
     }
 
     try {
-      await this.groceryItemModel.deleteOne({ _id: id }).exec();
+      await this.groceryItemsRepository.deleteOneById(id);
       return { deleted: true };
     } catch (err) {
       return { deleted: false, message: err.message };

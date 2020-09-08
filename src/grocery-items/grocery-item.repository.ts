@@ -9,7 +9,7 @@ export interface IGroceryItemsRepository {
   findOneById(id: string): Promise<IGroceryItem>;
   createOne(groceryItem: IGroceryItem): Promise<IGroceryItem>;
   updateOneById(id: string, groceryItem: IGroceryItem): Promise<IGroceryItem>;
-  deleteOne(id: string): Promise<void>;
+  deleteOneById(id: string): Promise<void>;
 }
 
 @Injectable()
@@ -40,7 +40,7 @@ export class GroceryItemsRepository implements IGroceryItemsRepository {
       .exec();
   }
 
-  async deleteOne(id: string): Promise<void> {
+  async deleteOneById(id: string): Promise<void> {
     await this.groceryItemModel.deleteOne({ _id: id }).exec();
   }
 }

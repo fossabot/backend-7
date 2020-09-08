@@ -7,6 +7,7 @@ import { DocumentQuery, Model } from 'mongoose';
 // import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 import { GroceryItemsRepository } from './grocery-item.repository';
 import { IGroceryItemDocument } from './interfaces/igrocery-item-document.interface';
+import { NotFoundException } from '@nestjs/common';
 
 const mockGroceryItem: (
   name?: string,
@@ -109,6 +110,7 @@ describe('GroceryItemService', () => {
             findOneById: jest.fn(),
             findAllByOwnerId: jest.fn(),
             updateOneById: jest.fn(),
+            deleteOneById: jest.fn(),
           },
         },
       ],
@@ -197,59 +199,25 @@ describe('GroceryItemService', () => {
     );
   });
   it('should delete a grocery item successfully', async () => {
-    // really just returning a truthy value here as we aren't doing any logic with the return
-    jest.spyOn(model, 'findOne').mockReturnValueOnce(
-      createMock<
-        DocumentQuery<IGroceryItemDocument, IGroceryItemDocument, unknown>
-      >({
-        exec: jest.fn().mockResolvedValueOnce(
-          mockGroceryItemDocument({
-            id: '1',
-            name: 'Potato',
-            description: 'chips',
-            quantity: 1.5,
-            userId: 'root',
-          }),
-        ),
-      }),
-    );
+    // jest.spyOn(repository, 'deleteOneById').mockClear();
+    jest.spyOn(repository, 'findOneById').mockResolvedValue({
+      _id: '1',
+      name: 'Potato',
+      description: 'chips',
+      quantity: 1.5,
+      userId: 'root',
+    });
 
-    jest.spyOn(model, 'deleteOne').mockReturnValueOnce(
-      createMock<DocumentQuery<any, any, unknown>>({
-        exec: jest.fn().mockResolvedValueOnce(true as any),
-      }),
-    );
-    expect(await service.deleteOne('a good id', 'root')).toEqual({
+    expect(await service.deleteOne('1', 'root')).toEqual({
       deleted: true,
     });
   });
   it('should not delete a grocery item', async () => {
     // really just returning a falsy value here as we aren't doing any logic with the return
-    jest.spyOn(model, 'findOne').mockReturnValueOnce(
-      createMock<
-        DocumentQuery<IGroceryItemDocument, IGroceryItemDocument, unknown>
-      >({
-        exec: jest.fn().mockResolvedValueOnce(
-          mockGroceryItemDocument({
-            id: 'a bad id',
-            name: 'Potato',
-            description: 'chips',
-            quantity: 1.5,
-            userId: 'root',
-          }),
-        ),
-      }),
-    );
+    jest.spyOn(repository, 'findOneById').mockResolvedValue(undefined);
 
-    jest.spyOn(model, 'deleteOne').mockReturnValueOnce(
-      createMock<DocumentQuery<any, any, unknown>>({
-        exec: jest.fn().mockRejectedValueOnce(new Error('Bad delete')),
-      }),
+    expect(() => service.deleteOne('a bad id', 'root')).rejects.toEqual(
+      new NotFoundException("The record with given id doesn't exist"),
     );
-
-    expect(await service.deleteOne('a bad id', 'root')).toEqual({
-      deleted: false,
-      message: 'Bad delete',
-    });
   });
 });
