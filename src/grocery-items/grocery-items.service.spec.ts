@@ -1,11 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GroceryItemsService } from './grocery-items.service';
-import { getModelToken } from '@nestjs/mongoose';
-import { GroceryItem } from './interfaces/grocery-item.interface';
-import { createMock } from '@golevelup/nestjs-testing';
-import { DocumentQuery, Model } from 'mongoose';
-// import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 import { GroceryItemsRepository } from './grocery-item.repository';
+import { GroceryItem } from './interfaces/grocery-item.interface';
 import { IGroceryItemDocument } from './interfaces/igrocery-item-document.interface';
 import { NotFoundException } from '@nestjs/common';
 
@@ -79,30 +75,12 @@ const groceryItemsDocArray = [
 
 describe('GroceryItemService', () => {
   let service: GroceryItemsService;
-  let model: Model<IGroceryItemDocument>;
   let repository: GroceryItemsRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GroceryItemsService,
-        //TODO to delete
-        {
-          provide: getModelToken('GroceryItem'),
-          useValue: {
-            new: jest.fn().mockResolvedValue(mockGroceryItem()),
-            constructor: jest.fn().mockResolvedValue(mockGroceryItem()),
-            find: jest.fn(),
-            findOne: jest.fn(),
-            update: jest.fn(),
-            updateOne: jest.fn(),
-            findOneAndUpdate: jest.fn(),
-            create: jest.fn(),
-            remove: jest.fn(),
-            deleteOne: jest.fn(),
-            exec: jest.fn(),
-          },
-        },
         {
           provide: GroceryItemsRepository,
           useValue: {
@@ -118,9 +96,6 @@ describe('GroceryItemService', () => {
 
     service = module.get<GroceryItemsService>(GroceryItemsService);
     repository = module.get<GroceryItemsRepository>(GroceryItemsRepository);
-    model = module.get<Model<IGroceryItemDocument>>(
-      getModelToken('GroceryItem'),
-    );
   });
 
   it('should be defined', () => {

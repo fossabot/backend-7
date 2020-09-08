@@ -1,12 +1,9 @@
-import { Model } from 'mongoose';
 import {
   Injectable,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { GroceryItem } from './interfaces/grocery-item.interface';
-import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 import { GroceryItemDto } from './dto/grocery-item.dto';
 import { GroceryItemsRepository } from './grocery-item.repository';
 
@@ -32,8 +29,6 @@ export interface IGroceryItemsService {
 @Injectable()
 export class GroceryItemsService implements IGroceryItemsService {
   constructor(
-    @InjectModel('GroceryItem')
-    private readonly groceryItemModel: Model<GroceryItemDocument>,
     private readonly groceryItemsRepository: GroceryItemsRepository,
   ) {}
 
@@ -42,9 +37,6 @@ export class GroceryItemsService implements IGroceryItemsService {
     ownerId: string,
   ): Promise<GroceryItem> {
     groceryItemDto.userId = ownerId;
-    // const createdGroceryItem = await this.groceryItemModel.create(
-    //   groceryItemDto,
-    // );
 
     const createdGroceryItem = await this.groceryItemsRepository.createOne(
       groceryItemDto,
@@ -93,10 +85,6 @@ export class GroceryItemsService implements IGroceryItemsService {
   }
 
   async getAllByOwnerId(userId: string): Promise<GroceryItem[]> {
-    // const groceryItems = await this.groceryItemModel
-    //   .find({ userId }, { __v: 0, userId: 0 })
-    //   .exec();
-
     const groceryItems = await this.groceryItemsRepository.findAllByOwnerId(
       userId,
     );
@@ -111,7 +99,6 @@ export class GroceryItemsService implements IGroceryItemsService {
   }
 
   async getOneById(id: string, currentUserId: string): Promise<GroceryItem> {
-    // const groceryItem = await this.groceryItemModel.findOne({ _id: id }).exec();
     const groceryItem = await this.groceryItemsRepository.findOneById(id);
 
     if (!groceryItem) {
