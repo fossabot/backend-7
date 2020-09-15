@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { GroceryItemDto } from './dto/grocery-item.dto';
-import { IGroceryItem } from './interfaces/igrocery-item.interface';
+import { GroceryItem } from './interfaces/grocery-item.interface';
 import { GroceryItemsRepository } from './grocery-item.repository';
 
 export interface DeleteResult {
@@ -16,13 +16,13 @@ export interface IGroceryItemsService {
   createNew(
     groceryItemDto: GroceryItemDto,
     ownerId: string,
-  ): Promise<IGroceryItem>;
+  ): Promise<GroceryItem>;
   updateOne(
     groceryItemDto: GroceryItemDto,
     currentUserId: string,
-  ): Promise<IGroceryItem>;
-  getAllByOwnerId(ownerId: string): Promise<IGroceryItem[]>;
-  getOneById(id: string, currentUserId: string): Promise<IGroceryItem>;
+  ): Promise<GroceryItem>;
+  getAllByOwnerId(ownerId: string): Promise<GroceryItem[]>;
+  getOneById(id: string, currentUserId: string): Promise<GroceryItem>;
   deleteOne(id: string, currentUserId: string): Promise<DeleteResult>;
 }
 
@@ -35,7 +35,7 @@ export class GroceryItemsService implements IGroceryItemsService {
   async createNew(
     groceryItemDto: GroceryItemDto,
     ownerId: string,
-  ): Promise<IGroceryItem> {
+  ): Promise<GroceryItem> {
     groceryItemDto.userId = ownerId;
 
     const createdGroceryItem = await this.groceryItemsRepository.createOne(
@@ -48,7 +48,7 @@ export class GroceryItemsService implements IGroceryItemsService {
   async updateOne(
     groceryItemDto: GroceryItemDto,
     currentUserId: string,
-  ): Promise<IGroceryItem> {
+  ): Promise<GroceryItem> {
     const { id } = groceryItemDto;
 
     const existingGroceryItem = await this.groceryItemsRepository.findOneById(
@@ -72,7 +72,7 @@ export class GroceryItemsService implements IGroceryItemsService {
     return groceryItem;
   }
 
-  async getAllByOwnerId(userId: string): Promise<IGroceryItem[]> {
+  async getAllByOwnerId(userId: string): Promise<GroceryItem[]> {
     const groceryItems = await this.groceryItemsRepository.findAllByOwnerId(
       userId,
     );
@@ -80,7 +80,7 @@ export class GroceryItemsService implements IGroceryItemsService {
     return groceryItems;
   }
 
-  async getOneById(id: string, currentUserId: string): Promise<IGroceryItem> {
+  async getOneById(id: string, currentUserId: string): Promise<GroceryItem> {
     const groceryItem = await this.groceryItemsRepository.findOneById(id);
 
     if (!groceryItem) {

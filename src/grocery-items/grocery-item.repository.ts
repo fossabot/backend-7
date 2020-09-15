@@ -1,14 +1,14 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IGroceryItem } from './interfaces/igrocery-item.interface';
-import { IGroceryItemDocument } from './interfaces/igrocery-item-document.interface';
+import { GroceryItem } from './interfaces/grocery-item.interface';
+import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 
 export interface IGroceryItemsRepository {
-  findAllByOwnerId(ownerId: string): Promise<IGroceryItem[]>;
-  findOneById(id: string): Promise<IGroceryItem>;
-  createOne(groceryItem: IGroceryItem): Promise<IGroceryItem>;
-  updateOneById(id: string, groceryItem: IGroceryItem): Promise<IGroceryItem>;
+  findAllByOwnerId(ownerId: string): Promise<GroceryItem[]>;
+  findOneById(id: string): Promise<GroceryItem>;
+  createOne(groceryItem: GroceryItem): Promise<GroceryItem>;
+  updateOneById(id: string, groceryItem: GroceryItem): Promise<GroceryItem>;
   deleteOneById(id: string): Promise<void>;
 }
 
@@ -16,25 +16,25 @@ export interface IGroceryItemsRepository {
 export class GroceryItemsRepository implements IGroceryItemsRepository {
   constructor(
     @InjectModel('GroceryItem')
-    private readonly groceryItemModel: Model<IGroceryItemDocument>,
+    private readonly groceryItemModel: Model<GroceryItemDocument>,
   ) {}
 
-  async findAllByOwnerId(ownerId: string): Promise<IGroceryItem[]> {
+  async findAllByOwnerId(ownerId: string): Promise<GroceryItem[]> {
     return await this.groceryItemModel.find({ userId: ownerId }).exec();
   }
 
-  async findOneById(id: string): Promise<IGroceryItem> {
+  async findOneById(id: string): Promise<GroceryItem> {
     return await this.groceryItemModel.findOne({ _id: id }).exec();
   }
 
-  async createOne(groceryItem: IGroceryItem): Promise<IGroceryItem> {
+  async createOne(groceryItem: GroceryItem): Promise<GroceryItem> {
     return await this.groceryItemModel.create(groceryItem);
   }
 
   async updateOneById(
     id: string,
-    groceryItem: IGroceryItem,
-  ): Promise<IGroceryItem> {
+    groceryItem: GroceryItem,
+  ): Promise<GroceryItem> {
     return await this.groceryItemModel
       .updateOne({ _id: id }, groceryItem)
       .exec();

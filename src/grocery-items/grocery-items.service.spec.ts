@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GroceryItemsService } from './grocery-items.service';
 import { GroceryItemsRepository } from './grocery-item.repository';
-import { IGroceryItem } from './interfaces/igrocery-item.interface';
-import { IGroceryItemDocument } from './interfaces/igrocery-item-document.interface';
+import { GroceryItem } from './interfaces/grocery-item.interface';
+import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 import { NotFoundException } from '@nestjs/common';
 
 const mockGroceryItem: (
@@ -11,7 +11,7 @@ const mockGroceryItem: (
   description?: string,
   quantity?: number,
   userId?: string,
-) => IGroceryItem = (name, _id, description, quantity, userId) => {
+) => GroceryItem = (name, _id, description, quantity, userId) => {
   return {
     name,
     _id,
@@ -27,7 +27,7 @@ const mockGroceryItemDocument: (mock?: {
   description?: string;
   quantity?: number;
   userId?: string;
-}) => Partial<IGroceryItemDocument> = (mock?: {
+}) => Partial<GroceryItemDocument> = (mock?: {
   name: string;
   _id: string;
   description: string;
@@ -43,7 +43,7 @@ const mockGroceryItemDocument: (mock?: {
   };
 };
 
-const groceryItemsArray: IGroceryItem[] = [
+const groceryItemsArray: GroceryItem[] = [
   mockGroceryItem('Potato', '1', 'nice tomato', 1, 'root'),
   mockGroceryItem('Egg', '2', 'boiled egg', 2, 'root'),
   mockGroceryItem('Milk', '3', 'mmmmmilk', 3, 'root'),
@@ -109,7 +109,7 @@ describe('GroceryItemService', () => {
   it('should return all grocery items for root user', async () => {
     jest
       .spyOn(repository, 'findAllByOwnerId')
-      .mockResolvedValue(groceryItemsDocArray as IGroceryItemDocument[]);
+      .mockResolvedValue(groceryItemsDocArray as GroceryItemDocument[]);
     
     const groceryItems = await service.getAllByOwnerId('root');
     expect(groceryItems).toEqual(groceryItemsArray);

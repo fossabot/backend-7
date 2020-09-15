@@ -1,5 +1,5 @@
-import { IGroceryItemBase } from '../interfaces//igrocery-item-base.interface';
+import { GroceryItemBase } from '../interfaces/grocery-item-base.interface';
 
-export interface GroceryItemDto extends IGroceryItemBase {
+export interface GroceryItemDto extends GroceryItemBase {
   id?: string;
 }

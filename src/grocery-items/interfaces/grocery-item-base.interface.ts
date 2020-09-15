@@ -1,4 +1,4 @@
-export interface IGroceryItemBase {
+export interface GroceryItemBase {
   name: string;
   quantity: number;
   description?: string;
