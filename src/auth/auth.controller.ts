@@ -11,10 +11,11 @@ import {
 import { Request } from 'express';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
-import { User } from '../users/schemas/user.schema';
+import { User } from '../users/interfaces/user.interface';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { AccessTokenDto } from './dto/access-token.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -24,7 +25,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Req() req: Request): Promise<AccessTokenDto> {
-    return this.authService.login(req.user as User);
+    return this.authService.login(req.user as LoginDto);
   }
 
   @UseGuards(JwtAuthGuard)

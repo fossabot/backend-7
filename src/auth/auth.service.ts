@@ -8,11 +8,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { AccessTokenDto } from './dto/access-token.dto';
-
-interface LoginDto {
-  _id: string;
-  email: string;
-}
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
