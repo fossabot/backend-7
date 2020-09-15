@@ -1,5 +1,7 @@
-import { User } from "./interfaces/user.interface";
+import { User } from './interfaces/user.interface';
 
 export interface IUsersRepository {
-    findAllByOwnerId(ownerId: string): Promise<User[]>;
-  }
+  findAll(): Promise<User[]>;
+  findOneById(email: string): Promise<User>;
+  createOne(user: User): Promise<User>;
+}
