@@ -6,13 +6,13 @@ import { User } from './interfaces/user.interface';
 import { UsersRepository } from './users.repository';
 
 const mockUser: (
-  id?: string,
+  _id?: string,
   email?: string,
   password?: string,
   name?: string,
-) => User = (id, email, password, name) => {
+) => User = (_id, email, password, name) => {
   return {
-    id,
+    _id,
     email,
     password,
     name,
@@ -37,6 +37,33 @@ const mockUserDocument: (mock?: {
     name: mock.name,
   };
 };
+
+const usersArray: User[] = [
+  mockUser('1', 'test1@test.com', 'test1', 'name1'),
+  mockUser('2', 'test2@test.com', 'test2', 'name2'),
+  mockUser('3', 'test3@test.com', 'test3', 'name3'),
+];
+
+const usersDocArray = [
+  mockUserDocument({
+    id: '1',
+    email: 'test1@test.com',
+    password: 'test1',
+    name: 'name1',
+  }),
+  mockUserDocument({
+    id: '2',
+    email: 'test2@test.com',
+    password: 'test2',
+    name: 'name2',
+  }),
+  mockUserDocument({
+    id: '3',
+    email: 'test3@test.com',
+    password: 'test3',
+    name: 'name3',
+  }),
+];
 
 describe('UsersRepository', () => {
   let repository: UsersRepository;
@@ -75,5 +102,13 @@ describe('UsersRepository', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should return all users', async () => {
+    jest.spyOn(model, 'find').mockReturnValue({
+      exec: jest.fn().mockResolvedValueOnce(usersDocArray),
+    } as any);
+    const users = await repository.findAll();
+    expect(users).toEqual(usersArray);
   });
 });
