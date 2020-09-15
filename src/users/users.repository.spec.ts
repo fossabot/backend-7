@@ -19,6 +19,25 @@ const mockUser: (
   };
 };
 
+const mockUserDocument: (mock?: {
+  id?: string;
+  email?: string;
+  password?: string;
+  name?: string;
+}) => Partial<UserDocument> = (mock?: {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+}) => {
+  return {
+    _id: mock.id,
+    email: mock.email,
+    password: mock.password,
+    name: mock.name,
+  };
+};
+
 describe('UsersRepository', () => {
   let repository: UsersRepository;
   let model: Model<UserDocument>;
