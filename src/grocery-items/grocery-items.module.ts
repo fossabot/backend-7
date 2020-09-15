@@ -4,7 +4,7 @@ import { GroceryItemsController } from './grocery-items.controller';
 import { GroceryItemsService } from './grocery-items.service';
 import { GroceryItemSchema } from './schemas/grocery-item.schema';
 import { PassportModule } from '@nestjs/passport';
-import { GroceryItemsRepository } from './grocery-item.repository';
+import { GroceryItemsRepository } from './grocery-items.repository';
 
 @Module({
   imports: [

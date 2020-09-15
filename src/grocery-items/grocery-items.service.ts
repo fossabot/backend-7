@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { GroceryItemDto } from './dto/grocery-item.dto';
 import { GroceryItem } from './interfaces/grocery-item.interface';
-import { GroceryItemsRepository } from './grocery-item.repository';
+import { GroceryItemsRepository } from './grocery-items.repository';
 
 export interface DeleteResult {
   deleted: boolean;

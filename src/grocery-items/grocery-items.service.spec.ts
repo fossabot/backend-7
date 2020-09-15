@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GroceryItemsService } from './grocery-items.service';
-import { GroceryItemsRepository } from './grocery-item.repository';
+import { GroceryItemsRepository } from './grocery-items.repository';
 import { GroceryItem } from './interfaces/grocery-item.interface';
 import { GroceryItemDocument } from './interfaces/grocery-item-document.interface';
 import { NotFoundException } from '@nestjs/common';
