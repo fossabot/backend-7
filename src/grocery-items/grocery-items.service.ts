@@ -3,8 +3,8 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { GroceryItem } from './interfaces/grocery-item.interface';
 import { GroceryItemDto } from './dto/grocery-item.dto';
+import { IGroceryItem } from './interfaces/igrocery-item.interface';
 import { GroceryItemsRepository } from './grocery-item.repository';
 
 export interface DeleteResult {
@@ -16,13 +16,13 @@ export interface IGroceryItemsService {
   createNew(
     groceryItemDto: GroceryItemDto,
     ownerId: string,
-  ): Promise<GroceryItem>;
+  ): Promise<IGroceryItem>;
   updateOne(
     groceryItemDto: GroceryItemDto,
     currentUserId: string,
-  ): Promise<GroceryItem>;
-  getAllByOwnerId(ownerId: string): Promise<GroceryItem[]>;
-  getOneById(id: string, currentUserId: string): Promise<GroceryItem>;
+  ): Promise<IGroceryItem>;
+  getAllByOwnerId(ownerId: string): Promise<IGroceryItem[]>;
+  getOneById(id: string, currentUserId: string): Promise<IGroceryItem>;
   deleteOne(id: string, currentUserId: string): Promise<DeleteResult>;
 }
 
@@ -35,26 +35,20 @@ export class GroceryItemsService implements IGroceryItemsService {
   async createNew(
     groceryItemDto: GroceryItemDto,
     ownerId: string,
-  ): Promise<GroceryItem> {
+  ): Promise<IGroceryItem> {
     groceryItemDto.userId = ownerId;
 
     const createdGroceryItem = await this.groceryItemsRepository.createOne(
       groceryItemDto,
     );
 
-    return {
-      id: createdGroceryItem._id,
-      name: createdGroceryItem.name,
-      quantity: createdGroceryItem.quantity,
-      description: createdGroceryItem.description,
-      unit: createdGroceryItem.unit,
-    };
+    return createdGroceryItem;
   }
 
   async updateOne(
-    groceryItemDto: GroceryItem,
+    groceryItemDto: GroceryItemDto,
     currentUserId: string,
-  ): Promise<GroceryItem> {
+  ): Promise<IGroceryItem> {
     const { id } = groceryItemDto;
 
     const existingGroceryItem = await this.groceryItemsRepository.findOneById(
@@ -75,30 +69,18 @@ export class GroceryItemsService implements IGroceryItemsService {
 
     const groceryItem = await this.groceryItemsRepository.findOneById(id);
 
-    return {
-      id: groceryItem._id,
-      name: groceryItem.name,
-      quantity: groceryItem.quantity,
-      description: groceryItem.description,
-      unit: groceryItem.unit,
-    };
+    return groceryItem;
   }
 
-  async getAllByOwnerId(userId: string): Promise<GroceryItem[]> {
+  async getAllByOwnerId(userId: string): Promise<IGroceryItem[]> {
     const groceryItems = await this.groceryItemsRepository.findAllByOwnerId(
       userId,
     );
 
-    return groceryItems.map((groceryItem) => ({
-      id: groceryItem._id,
-      name: groceryItem.name,
-      quantity: groceryItem.quantity,
-      description: groceryItem.description,
-      unit: groceryItem.unit,
-    }));
+    return groceryItems;
   }
 
-  async getOneById(id: string, currentUserId: string): Promise<GroceryItem> {
+  async getOneById(id: string, currentUserId: string): Promise<IGroceryItem> {
     const groceryItem = await this.groceryItemsRepository.findOneById(id);
 
     if (!groceryItem) {
@@ -111,13 +93,7 @@ export class GroceryItemsService implements IGroceryItemsService {
       );
     }
 
-    return {
-      id: groceryItem._id,
-      name: groceryItem.name,
-      quantity: groceryItem.quantity,
-      description: groceryItem.description,
-      unit: groceryItem.unit,
-    };
+    return groceryItem;
   }
 
   async deleteOne(id: string, currentUserId: string): Promise<DeleteResult> {

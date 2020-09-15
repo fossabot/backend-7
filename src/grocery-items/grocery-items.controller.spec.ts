@@ -25,37 +25,39 @@ describe('GroceryItemsController', () => {
               .fn()
               .mockImplementation(
                 (groceryItemDto: GroceryItemDto, ownerId: string) =>
-                  Promise.resolve({ id: 'a uuid', ...groceryItemDto }),
+                  Promise.resolve({ _id: 'a uuid', ...groceryItemDto }),
               ),
             updateOne: jest
               .fn()
               .mockImplementation(
                 (groceryItemDto: GroceryItemDto, currentUserId: string) =>
-                  Promise.resolve({ id: 'a uuid', ...groceryItemDto }),
+                  Promise.resolve({ _id: 'a uuid', ...groceryItemDto }),
               ),
             getAllByOwnerId: jest.fn().mockImplementation((userId: string) =>
               Promise.resolve([
                 {
-                  id: '1',
+                  _id: '1',
                   name: 'test',
                   description: 'desc',
                   quantity: 1,
                   userId: userId,
+                  unit: 'Each',
                 },
                 {
-                  id: '2',
+                  _id: '2',
                   name: 'test2',
                   description: 'desc2',
                   quantity: 1.5,
                   userId: userId,
+                  unit: 'Each',
                 },
               ]),
             ),
             getOneById: jest
               .fn()
-              .mockImplementation((id: string, currentUserId: string) =>
+              .mockImplementation((_id: string, currentUserId: string) =>
                 Promise.resolve({
-                  id,
+                  _id,
                   userId: currentUserId,
                   name: 'test',
                   description: 'test',
@@ -92,14 +94,14 @@ describe('GroceryItemsController', () => {
           name: 'test',
           description: 'desc',
           quantity: 1,
-          userId: 'root',
+          unit: 'Each',
         },
         {
           id: '2',
           name: 'test2',
           description: 'desc2',
           quantity: 1.5,
-          userId: 'root',
+          unit: 'Each',
         },
       ]);
     });
@@ -110,7 +112,6 @@ describe('GroceryItemsController', () => {
         await groceryItemsController.getById('1', mockRequestObject()),
       ).toEqual({
         id: '1',
-        userId: 'root',
         name: 'test',
         description: 'test',
         quantity: 1,
@@ -119,7 +120,6 @@ describe('GroceryItemsController', () => {
         await groceryItemsController.getById('2', mockRequestObject()),
       ).toEqual({
         id: '2',
-        userId: 'root',
         name: 'test',
         description: 'test',
         quantity: 1,

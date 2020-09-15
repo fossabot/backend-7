@@ -1,7 +1,5 @@
-export interface GroceryItemDto {
-  _id?: string;
-  name: string;
-  quantity: number;
-  description?: string;
-  userId?: string;
+import { IGroceryItemBase } from '../interfaces//igrocery-item-base.interface';
+
+export interface GroceryItemDto extends IGroceryItemBase {
+  id?: string;
 }
