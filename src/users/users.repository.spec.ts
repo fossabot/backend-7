@@ -126,6 +126,20 @@ describe('UsersRepository', () => {
     expect(user).toEqual(expectedUser);
   });
 
+  it('should return one user by email', async () => {
+    const expectedUser = {
+      _id: '1',
+      email: 'test@company.com',
+      password: 'test',
+      name: 'test name',
+    };
+    jest.spyOn(model, 'findOne').mockReturnValue({
+      exec: jest.fn().mockResolvedValueOnce(mockUserDocument(expectedUser)),
+    } as any);
+    const user = await repository.findOneByEmail('test@company.com');
+    expect(user).toEqual(expectedUser);
+  });
+
   it('should create new user', async () => {
     jest.spyOn(model, 'create').mockResolvedValueOnce({
       _id: '1',

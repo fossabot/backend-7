@@ -43,15 +43,15 @@ describe('App (e2e)', () => {
       access_token = accessToken.body.access_token;
     });
 
-    // small script to remove all database entries for cat between tests
+    // small script to remove all database entries for grocery items between tests
     beforeEach(async () => {
       const uncleared = await request(app.getHttpServer())
         .get('/grocery-items')
         .set('Authorization', 'Bearer ' + access_token);
       await Promise.all(
-        uncleared.body.map(async (cat) => {
+        uncleared.body.map(async (groceryItem) => {
           return request(app.getHttpServer()).delete(
-            `/grocery-items/${cat.id}`,
+            `/grocery-items/${groceryItem.id}`,
           );
         }),
       );
@@ -62,6 +62,7 @@ describe('App (e2e)', () => {
         name: 'Test',
         description: 'Russian Blue',
         quantity: 1.5,
+        unit: 'Each'
       };
       const data = await request(app.getHttpServer())
         .post('/grocery-items')
@@ -98,6 +99,7 @@ describe('App (e2e)', () => {
         name: 'Test',
         description: 'Russian Blue',
         quantity: 1.5,
+        unit: 'Liter'
       };
       const data = await request(app.getHttpServer())
         .post('/grocery-items')

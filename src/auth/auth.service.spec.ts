@@ -1,23 +1,20 @@
-import { Model } from 'mongoose';
-import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthService } from './auth.service';
 import { User } from '../users/interfaces/user.interface';
-import { UserDocument } from '../users/interfaces/user-document.interface';
 import { UsersService } from '../users/users.service';
 import { JwtModule } from '@nestjs/jwt';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 const mockUser: (
+  _id?: string,
   email?: string,
-  id?: string,
   password?: string,
   name?: string,
-) => User = (email, id, password, name) => {
+) => User = (_id, email, password, name) => {
   return {
+    _id,
     email,
-    id,
     password,
     name,
   };
@@ -25,18 +22,18 @@ const mockUser: (
 
 const mockUserDocument: (mock?: {
   email?: string;
-  id?: string;
+  _id?: string;
   password?: string;
   name?: string;
 }) => Partial<User> = (mock?: {
   email: string;
-  id: string;
+  _id: string;
   password: string;
   name: string;
 }) => {
   return {
+    _id: mock._id,
     email: mock.email,
-    _id: mock.id,
     password: mock.password,
     name: mock.name,
   };
@@ -44,27 +41,18 @@ const mockUserDocument: (mock?: {
 
 describe('AuthService', () => {
   let service: AuthService;
-  let model: Model<UserDocument>;
+  let usersService: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        UsersService,
         {
-          provide: getModelToken('User'),
+          provide: UsersService,
           useValue: {
-            new: jest.fn().mockResolvedValue(mockUser()),
-            constructor: jest.fn().mockResolvedValue(mockUser()),
-            find: jest.fn(),
-            findOne: jest.fn(),
-            update: jest.fn(),
-            updateOne: jest.fn(),
-            findOneAndUpdate: jest.fn(),
             create: jest.fn(),
-            remove: jest.fn(),
-            deleteOne: jest.fn(),
-            exec: jest.fn(),
+            findAll: jest.fn(),
+            findByEmail: jest.fn(),
           },
         },
       ],
@@ -80,7 +68,7 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    model = module.get<Model<UserDocument>>(getModelToken('User'));
+    usersService = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
@@ -92,33 +80,31 @@ describe('AuthService', () => {
   });
 
   it('should validate user when passed proper credentials', async () => {
-    jest.spyOn(model, 'findOne').mockReturnValue({
-      exec: jest.fn().mockResolvedValueOnce(
-        mockUserDocument({
-          email: 'test@test.com',
-          id: 'id',
-          password:
-            '$2y$12$IZapIA6nVVUK0wQChi1hMeTgKrxLtrIC7YTAqNADbvuVL2MeHJFza',
-          name: 'test',
-        }),
-      ),
-    } as any);
+    jest
+      .spyOn(usersService, 'findByEmail')
+      .mockResolvedValue(
+        mockUser(
+          'id',
+          'test@test.com',
+          '$2y$12$IZapIA6nVVUK0wQChi1hMeTgKrxLtrIC7YTAqNADbvuVL2MeHJFza',
+          'test',
+        ),
+      );
 
     const validatedUser = await service.validateUser('test@test.com', 'test');
     expect(validatedUser).toMatchObject({ _id: 'id', email: 'test@test.com' });
   });
   it('should not validate user when passed wrong credentials', async () => {
-    jest.spyOn(model, 'findOne').mockReturnValue({
-      exec: jest.fn().mockResolvedValueOnce(
-        mockUserDocument({
-          email: 'test@test.com',
-          id: 'id',
-          password:
-            '$2y$12$IZapIA6nVVUK0wQChi1hMeTgKrxLtrIC7YTAqNADbvuVL2MeHJFza',
-          name: 'test',
-        }),
-      ),
-    } as any);
+    jest
+      .spyOn(usersService, 'findByEmail')
+      .mockResolvedValue(
+        mockUser(
+          'id',
+          'test@test.com',
+          '$2y$12$IZapIA6nVVUK0wQChi1hMeTgKrxLtrIC7YTAqNADbvuVL2MeHJFza',
+          'test',
+        ),
+      );
 
     const validatedUser = await service.validateUser('test@test.com', 'test1');
     expect(validatedUser).toBe(null);
@@ -131,16 +117,14 @@ describe('AuthService', () => {
     expect(accessToken).toMatchObject({ access_token: expect.any(String) });
   });
   it('should register new user', async () => {
-    jest.spyOn(model, 'findOne').mockReturnValue({
-      exec: jest.fn().mockResolvedValueOnce(null),
-    } as any);
+    jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
 
-    jest.spyOn(model, 'create').mockResolvedValueOnce({
+    jest.spyOn(usersService, 'create').mockResolvedValueOnce({
       _id: '1',
       email: 'test@test.com',
       password: 'test',
       name: 'test',
-    } as any);
+    });
 
     const newUser = await service.register({
       email: 'test@test.com',
@@ -156,19 +140,17 @@ describe('AuthService', () => {
     });
   });
   it('should return conflict when register a user with existing email address', async () => {
-    jest.spyOn(model, 'findOne').mockReturnValue({
-      exec: jest.fn().mockResolvedValueOnce(
-        mockUserDocument({
-          email: 'test@test.com',
-          id: 'id',
-          password:
-            '$2y$12$IZapIA6nVVUK0wQChi1hMeTgKrxLtrIC7YTAqNADbvuVL2MeHJFza',
-          name: 'test',
-        }),
-      ),
-    } as any);
+    jest.spyOn(usersService, 'findByEmail').mockResolvedValue(
+      mockUserDocument({
+        email: 'test@test.com',
+        _id: 'id',
+        password:
+          '$2y$12$IZapIA6nVVUK0wQChi1hMeTgKrxLtrIC7YTAqNADbvuVL2MeHJFza',
+        name: 'test',
+      }) as any,
+    );
 
-    jest.spyOn(model, 'create').mockResolvedValueOnce({
+    jest.spyOn(usersService, 'create').mockResolvedValueOnce({
       _id: '1',
       email: 'test@test.com',
       password: 'test',

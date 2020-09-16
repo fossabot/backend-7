@@ -6,6 +6,7 @@ import { UserDocument } from './interfaces/user-document.interface';
 
 export interface IUsersRepository {
   findAll(): Promise<User[]>;
+  findOneByEmail(email: string): Promise<User>;
   findOneById(email: string): Promise<User>;
   createOne(user: User): Promise<User>;
 }
@@ -22,6 +23,10 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async findOneById(email: string): Promise<User> {
+    return await this.userModel.findOne({ email }).exec();
+  }
+
+  async findOneByEmail(email: string): Promise<User> {
     return await this.userModel.findOne({ email }).exec();
   }
 
