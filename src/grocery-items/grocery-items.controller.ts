@@ -13,7 +13,7 @@ import { Request } from 'express';
 import { GroceryItemsService, DeleteResult } from './grocery-items.service';
 import { CreateGroceryItemDto } from './dto/create-grocery-item.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { User } from '../users/schemas/user.schema';
+import { User } from '../users/interfaces/user.interface';
 import { GroceryItemDto } from './dto/grocery-item.dto';
 
 //TODO Introduce object converters from and to user

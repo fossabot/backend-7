@@ -1,5 +1,3 @@
-import { User } from '../users/schemas/user.schema';
-
 //TODO Why import does not work
 const bcrypt = require('bcryptjs'); // eslint-disable-line
 
@@ -9,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { AccessTokenDto } from './dto/access-token.dto';
 import { LoginDto } from './dto/login.dto';
+import {User} from '../users/interfaces/user.interface'
+
 
 @Injectable()
 export class AuthService {
