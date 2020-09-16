@@ -117,13 +117,30 @@ describe('UsersRepository', () => {
       _id: '1',
       email: 'test@company.com',
       password: 'test',
-      name: 'test name'
-    }
+      name: 'test name',
+    };
     jest.spyOn(model, 'findOne').mockReturnValue({
-      
       exec: jest.fn().mockResolvedValueOnce(mockUserDocument(expectedUser)),
     } as any);
     const user = await repository.findOneById('1');
     expect(user).toEqual(expectedUser);
+  });
+
+  it('should create new user', async () => {
+    jest.spyOn(model, 'create').mockResolvedValueOnce({
+      _id: '1',
+      email: 'test@company.com',
+      password: 'testpass',
+      name: 'potato',
+    } as any); // dreaded as any, but it can't be helped
+
+    const newUser = await repository.createOne({
+      email: 'test@company.com',
+      password: 'testpass',
+      name: 'potato',
+    });
+    expect(newUser).toEqual(
+      mockUser('1', 'test@company.com', 'testpass', 'potato'),
+    );
   });
 });
