@@ -20,18 +20,18 @@ const mockUser: (
 };
 
 const mockUserDocument: (mock?: {
-  id?: string;
+  _id?: string;
   email?: string;
   password?: string;
   name?: string;
 }) => Partial<UserDocument> = (mock?: {
-  id: string;
+  _id: string;
   email: string;
   password: string;
   name: string;
 }) => {
   return {
-    _id: mock.id,
+    _id: mock._id,
     email: mock.email,
     password: mock.password,
     name: mock.name,
@@ -46,19 +46,19 @@ const usersArray: User[] = [
 
 const usersDocArray = [
   mockUserDocument({
-    id: '1',
+    _id: '1',
     email: 'test1@test.com',
     password: 'test1',
     name: 'name1',
   }),
   mockUserDocument({
-    id: '2',
+    _id: '2',
     email: 'test2@test.com',
     password: 'test2',
     name: 'name2',
   }),
   mockUserDocument({
-    id: '3',
+    _id: '3',
     email: 'test3@test.com',
     password: 'test3',
     name: 'name3',
@@ -110,5 +110,20 @@ describe('UsersRepository', () => {
     } as any);
     const users = await repository.findAll();
     expect(users).toEqual(usersArray);
+  });
+
+  it('should return one user by id', async () => {
+    const expectedUser = {
+      _id: '1',
+      email: 'test@company.com',
+      password: 'test',
+      name: 'test name'
+    }
+    jest.spyOn(model, 'findOne').mockReturnValue({
+      
+      exec: jest.fn().mockResolvedValueOnce(mockUserDocument(expectedUser)),
+    } as any);
+    const user = await repository.findOneById('1');
+    expect(user).toEqual(expectedUser);
   });
 });
